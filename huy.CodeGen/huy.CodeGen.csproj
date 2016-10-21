@@ -72,6 +72,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="CodeGenerator.cs" />
     <Compile Include="DatabaseUtils.cs" />
     <Compile Include="EntityProperty.cs" />
     <Compile Include="GenController.xaml.cs">
