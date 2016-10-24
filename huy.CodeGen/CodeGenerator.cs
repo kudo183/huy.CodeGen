@@ -6,7 +6,7 @@ namespace huy.CodeGen
 {
     public static class CodeGenerator
     {
-        public static  string GenDtoClass(string nameSpace, string interfaceName, string className, List<EntityProperty> properties)
+        public static string GenDtoClass(string nameSpace, string interfaceName, string className, List<EntityProperty> properties)
         {
             var sb = new StringBuilder();
             var tab = "    ";
@@ -91,6 +91,85 @@ namespace huy.CodeGen
                 sb.AppendLine(string.Format("{0}entity.{1} = dto.{1};", tab3, item.PropertyName));
             }
             sb.AppendLine(string.Format("{0}return entity;", tab3, enityClassName));
+            sb.AppendLine(tab2 + "}");
+            sb.AppendLine(tab + "}");
+            sb.AppendLine("}");
+            return sb.ToString();
+        }
+
+        public static string GenTextManagerClass(string nameSpace, string defaultLanguage, List<GenTextManagerViewModel.TextData> textDataList)
+        {
+            var sb = new StringBuilder();
+            var tab = "    ";
+            var tab2 = tab + tab;
+            var tab3 = tab2 + tab;
+            var tab4 = tab3 + tab;
+            var tab5 = tab4 + tab;
+            sb.AppendLine("using System.Collections.Generic;");
+            sb.AppendLine("using System.Runtime.CompilerServices;");
+            sb.AppendLine("using System.Threading;");
+            sb.AppendLine("using System.Windows;");
+            sb.AppendLine();
+            sb.AppendLine("namespace " + nameSpace);
+            sb.AppendLine("{");
+            sb.AppendLine(tab + "public static class TextManager");
+            sb.AppendLine(tab + "{");
+            sb.AppendLine(tab2 + "static readonly Dictionary<string, string> _dic = new Dictionary<string, string>();");
+            sb.AppendLine(string.Format("{0}static readonly string DefaultLanguage = \"{1}\";",tab2, defaultLanguage));
+            sb.AppendLine();
+            sb.AppendLine(tab2 + "static TextManager()");
+            sb.AppendLine(tab2 + "{");
+            sb.AppendLine(tab3 + "if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(new DependencyObject()) == true)");
+            sb.AppendLine(tab3 + "{");
+            sb.AppendLine(tab4 + "InitDefaultLanguageData();");
+            sb.AppendLine(tab4 + "return;");
+            sb.AppendLine(tab3 + "}");
+            sb.AppendLine();
+            sb.AppendLine(tab3 + "var language = Thread.CurrentThread.CurrentUICulture.Name.ToLower();");
+            sb.AppendLine(tab3 + "if (language == DefaultLanguage)");
+            sb.AppendLine(tab3 + "{");
+            sb.AppendLine(tab4 + "InitDefaultLanguageData();");
+            sb.AppendLine(tab4 + "return;");
+            sb.AppendLine(tab3 + "}");
+            sb.AppendLine();
+            sb.AppendLine(tab3 + "var fileName = language + \".txt\";");
+            sb.AppendLine(tab3 + "var di = new System.IO.DirectoryInfo(\"text\");");
+            sb.AppendLine(tab3 + "var fi = di.GetFiles(fileName);");
+            sb.AppendLine(tab3 + "if (fi.Length == 1)");
+            sb.AppendLine(tab3 + "{");
+            sb.AppendLine(tab4 + "var sr = fi[0].OpenText();");
+            sb.AppendLine(tab4 + "var line = sr.ReadLine();");
+            sb.AppendLine(tab4 + "while (string.IsNullOrEmpty(line) == false)");
+            sb.AppendLine(tab4 + "{");
+            sb.AppendLine(tab5 + "var texts = line.Split(new[] { \"\\t\\t\" }, System.StringSplitOptions.RemoveEmptyEntries);");
+            sb.AppendLine(tab5 + "_dic.Add(texts[0], texts[1]);");
+            sb.AppendLine(tab5 + "line = sr.ReadLine();");
+            sb.AppendLine(tab4 + "}");
+            sb.AppendLine(tab4 + "sr.Close();");
+            sb.AppendLine(tab3 + "}");
+            sb.AppendLine(tab2 + "}");
+            sb.AppendLine();
+            foreach (var item in textDataList)
+            {
+                sb.AppendLine(string.Format("{0}public static string {1} {{ get {{ return GetText(); }} }}", tab2, item.TextKey));
+            }
+            sb.AppendLine();
+            sb.AppendLine(tab2 + "public static string GetText([CallerMemberName] string textKey = null)");
+            sb.AppendLine(tab2 + "{");
+            sb.AppendLine(tab3 + "string text;");
+            sb.AppendLine(tab3 + "if (_dic.TryGetValue(textKey, out text) == true)");
+            sb.AppendLine(tab3 + "{");
+            sb.AppendLine(tab4 + "return text;");
+            sb.AppendLine(tab3 + "}");
+            sb.AppendLine(tab3 + "return \"[no text]\";");
+            sb.AppendLine(tab2 + "}");
+            sb.AppendLine();
+            sb.AppendLine(tab2 + "private static void InitDefaultLanguageData()");
+            sb.AppendLine(tab2 + "{");
+            foreach (var item in textDataList)
+            {
+                sb.AppendLine(string.Format("{0}_dic.Add(\"{1}\", \"{2}\");", tab3, item.TextKey, item.TextValue));
+            }
             sb.AppendLine(tab2 + "}");
             sb.AppendLine(tab + "}");
             sb.AppendLine("}");
