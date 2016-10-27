@@ -27,6 +27,8 @@ namespace huy.CodeGen
             vm = new GenTextManagerViewModel();
             vm.AllCultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
             vm.LanguageNameList = new ObservableCollection<string>();
+            vm.DatabaseName = "PhuDinhClientServer";
+            vm.SkippedTable = "__EFMigrationsHistory";
             DataContext = vm;
             CreateNewButton_Click(null, null);
         }
@@ -88,7 +90,7 @@ namespace huy.CodeGen
             vm.OutputPath = @"C:\codegen\Text";
         }
 
-        private void LoadFromButton_Click(object sender, RoutedEventArgs e)
+        private void LoadFromFileButton_Click(object sender, RoutedEventArgs e)
         {
             var ofd = new OpenFileDialog();
             ofd.Title = "Select TextManager.cs";
@@ -101,6 +103,40 @@ namespace huy.CodeGen
                 LoadTextData(vm.Result);
                 vm.LanguageName = vm.DefaultLanguageName;
             }
+        }
+
+        private void FromDBButton_Click(object sender, RoutedEventArgs e)
+        {
+            var data = new List<GenTextManagerViewModel.TextData>();
+            
+            var skippedTable = new List<string>(
+                vm.SkippedTable.Split(new char[] { ';' }, System.StringSplitOptions.RemoveEmptyEntries));
+            foreach (var table in DatabaseUtils.ListTables(vm.DatabaseName))
+            {
+                if (skippedTable.Count > 0 && skippedTable.Contains(table))
+                    continue;
+
+                var properties = DatabaseUtils.ListColumnsOfTable(vm.DatabaseName, table);
+                foreach (var prop in properties)
+                {
+                    data.Add(new GenTextManagerViewModel.TextData()
+                    {
+                        TextKey = string.Format("{0}_{1}", table, prop.PropertyName),
+                        TextValue = prop.PropertyName
+                    });
+                }
+            }
+
+            var l = vm.DefaultLanguageName;
+            _dic.Clear();
+            _dic.Add(l, data);
+            vm.LanguageNameList.Clear();
+            vm.LanguageNameList.Add(l);
+            vm.TextDataList = data;
+            vm.LanguageName = l;
+            vm.DefaultLanguageName = l;
+
+            GenerateButton_Click(null, null);
         }
 
         private void SaveToOutputPathButton_Click(object sender, RoutedEventArgs e)
@@ -178,7 +214,7 @@ namespace huy.CodeGen
                 textData = new List<GenTextManagerViewModel.TextData>();
                 _dic.Add(vm.LanguageName, textData);
             }
-            
+
             vm.TextDataList = textData;
         }
     }

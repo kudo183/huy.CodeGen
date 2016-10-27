@@ -22,6 +22,8 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <TextBlock Text="Namespace" Grid.Row="0"/>
             <TextBox Text="{Binding Namespace}" Grid.Row="0" Grid.Column="1" Width="200" HorizontalAlignment="Left"/>
@@ -40,10 +42,15 @@
                 <ComboBox ItemsSource="{Binding LanguageNameList}" SelectedValue="{Binding DefaultLanguageName}" Width="100" HorizontalAlignment="Left"/>
                 <TextBlock Margin="5 0" Text="{Binding DefaultLanguageDisplayName}"/>
             </StackPanel>
-            <StackPanel Grid.Row="5" Grid.ColumnSpan="2" Orientation="Horizontal">
+            <TextBlock Text="Database Name" Grid.Row="5"/>
+            <TextBox Text="{Binding DatabaseName}" Grid.Row="5" Grid.Column="1" Width="200" HorizontalAlignment="Left"/>
+            <TextBlock Text="Skipped Table" Grid.Row="6"/>
+            <TextBox Text="{Binding SkippedTable}" Grid.Row="6" Grid.Column="1"/>
+            <StackPanel Grid.Row="7" Grid.ColumnSpan="2" Orientation="Horizontal">
                 <Button Margin="5" Content="Generate TextManager.cs" Click="GenerateButton_Click"/>
                 <Button Margin="5" Content="CreateNew" Click="CreateNewButton_Click"/>
-                <Button Margin="5" Content="LoadFrom" Click="LoadFromButton_Click"/>
+                <Button Margin="5" Content="LoadFromFile" Click="LoadFromFileButton_Click"/>
+                <Button Margin="5" Content="FromDB" Click="FromDBButton_Click"/>
                 <Button Margin="5" Content="Save To OutputPath" Click="SaveToOutputPathButton_Click"/>
             </StackPanel>
         </Grid>

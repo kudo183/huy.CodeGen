@@ -185,7 +185,7 @@ namespace huy.CodeGen
             sb.AppendLine(tab + "public static class TextManager");
             sb.AppendLine(tab + "{");
             sb.AppendLine(tab2 + "static readonly Dictionary<string, string> _dic = new Dictionary<string, string>();");
-            sb.AppendLine(string.Format("{0}static readonly string DefaultLanguage = \"{1}\";", tab2, defaultLanguage));
+            sb.AppendFormat("{0}static readonly string DefaultLanguage = \"{1}\";\r\n", tab2, defaultLanguage);
             sb.AppendLine();
             sb.AppendLine(tab2 + "static TextManager()");
             sb.AppendLine(tab2 + "{");
@@ -221,7 +221,7 @@ namespace huy.CodeGen
             sb.AppendLine();
             foreach (var item in textDataList)
             {
-                sb.AppendLine(string.Format("{0}public static string {1} {{ get {{ return GetText(); }} }}", tab2, item.TextKey));
+                sb.AppendFormat("{0}public static string {1} {{ get {{ return GetText(); }} }}\r\n", tab2, item.TextKey);
             }
             sb.AppendLine();
             sb.AppendLine(tab2 + "public static string GetText([CallerMemberName] string textKey = null)");
@@ -238,7 +238,7 @@ namespace huy.CodeGen
             sb.AppendLine(tab2 + "{");
             foreach (var item in textDataList)
             {
-                sb.AppendLine(string.Format("{0}_dic.Add(\"{1}\", \"{2}\");", tab3, item.TextKey, item.TextValue));
+                sb.AppendFormat("{0}_dic.Add(\"{1}\", \"{2}\");\r\n", tab3, item.TextKey, item.TextValue);
             }
             sb.AppendLine(tab2 + "}");
             sb.AppendLine(tab + "}");

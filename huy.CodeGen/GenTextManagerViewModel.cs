@@ -113,6 +113,28 @@ namespace huy.CodeGen
             }
         }
 
+        private string _databaseName;
+        public string DatabaseName
+        {
+            get { return _databaseName; }
+            set
+            {
+                _databaseName = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _skippedTable;
+        public string SkippedTable
+        {
+            get { return _skippedTable; }
+            set
+            {
+                _skippedTable = value;
+                OnPropertyChanged();
+            }
+        }
+
         private string _result;
         public string Result
         {
