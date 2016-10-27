@@ -141,7 +141,7 @@ namespace huy.CodeGen
             sb.AppendLine();
             sb.AppendLine("namespace " + nameSpace);
             sb.AppendLine("{");
-            sb.AppendLine(string.Format("{0}public class {1}Controller : SwaEntityBaseController<{2}, {1}, {1}Dto>", tab, enityClassName, contextName));
+            sb.AppendLine(string.Format("{0}public partial class {1}Controller : SwaEntityBaseController<{2}, {1}, {1}Dto>", tab, enityClassName, contextName));
             sb.AppendLine(tab + "{");
             sb.AppendLine(string.Format("{0}public override {1}Dto ConvertToDto({1} entity)", tab2, enityClassName));
             sb.AppendLine(tab2 + "{");

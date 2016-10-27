@@ -14,6 +14,7 @@ namespace huy.CodeGen
         public string ContextName { get; set; }
         public string PropertyList { get; set; }
         public string DatabaseName { get; set; }
+        public string SkippedTable { get; set; }
         public string OutputPath { get; set; }
 
         private string result;

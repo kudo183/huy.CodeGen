@@ -22,6 +22,7 @@ namespace huy.CodeGen
             vm.ContextName = "PhuDinhServerContext";
             vm.PropertyList = "int Ma\r\nstring DiaDiemBaiXe";
             vm.DatabaseName = "PhuDinhClientServer";
+            vm.SkippedTable = "__EFMigrationsHistory;User";
             vm.OutputPath = @"C:\codegen\Controller";
             DataContext = vm;
         }
@@ -46,8 +47,13 @@ namespace huy.CodeGen
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
+            var skippedTable = new List<string>(
+                vm.SkippedTable.Split(new char[] { ';' }, System.StringSplitOptions.RemoveEmptyEntries));
             foreach (var table in DatabaseUtils.ListTables(vm.DatabaseName))
             {
+                if (skippedTable.Count > 0 && skippedTable.Contains(table))
+                    continue;
+
                 var properties = DatabaseUtils.ListColumnsOfTable(vm.DatabaseName, table);
                 var dtoClass = CodeGenerator.GenControllerClass(vm.Namespace, table, vm.ContextName, properties);
                 var path = vm.OutputPath + "\\" + table + "Controller.cs";

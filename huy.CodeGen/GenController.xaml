@@ -32,13 +32,16 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <TextBlock Text="Database Name" Grid.Row="0"/>
                     <TextBox Text="{Binding DatabaseName}" Grid.Row="0" Grid.Column="1"/>
-                    <TextBlock Text="Output Path" Grid.Row="1"/>
-                    <TextBox Text="{Binding OutputPath}" AcceptsReturn="True" Grid.Row="1" Grid.Column="1"/>
+                    <TextBlock Text="Skipped Table" Grid.Row="1"/>
+                    <TextBox Text="{Binding SkippedTable}" Grid.Row="1" Grid.Column="1"/>
+                    <TextBlock Text="Output Path" Grid.Row="2"/>
+                    <TextBox Text="{Binding OutputPath}" Grid.Row="2" Grid.Column="1"/>
 
-                    <Button Content="Generate" Grid.Row="2" Click="Button_Click_1"/>
+                    <Button Content="Generate" Grid.Row="3" Click="Button_Click_1"/>
                 </Grid>
             </TabItem>
             <TabItem Header="From UI">
