@@ -21,6 +21,7 @@ namespace huy.CodeGen
             vm.ClassName = "RBaiXeDto";
             vm.PropertyList = "int Ma\r\nstring DiaDiemBaiXe";
             vm.DatabaseName = "PhuDinhClientServer";
+            vm.SkippedTable = "__EFMigrationsHistory";
             vm.OutputPath = @"C:\codegen\DTO";
             DataContext = vm;
         }
@@ -37,18 +38,26 @@ namespace huy.CodeGen
                     break;
 
                 var p = line.Split(' ');
-                propertiesList.Add(new EntityProperty() { PropertyType = p[0], PropertyName = p[1] });
+                var property = new EntityProperty() { PropertyType = p[0], PropertyName = p[1] };
+                if (p.Length == 3)
+                    property.IsForeignKey = true;
+                propertiesList.Add(property);
             }
 
-            vm.Result = CodeGenerator.GenDtoClass(vm.Namespace, vm.InterfaceName, vm.ClassName, propertiesList);
+            vm.Result = CodeGenerator.GenDtoClassImplementINotifyPropertyChanged(vm.Namespace, vm.InterfaceName, vm.ClassName, propertiesList);
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
+            var skippedTable = new List<string>(
+                vm.SkippedTable.Split(new char[] { ';' }, System.StringSplitOptions.RemoveEmptyEntries));
             foreach (var table in DatabaseUtils.ListTables(vm.DatabaseName))
             {
+                if (skippedTable.Count > 0 && skippedTable.Contains(table))
+                    continue;
+
                 var properties = DatabaseUtils.ListColumnsOfTable(vm.DatabaseName, table);
-                var dtoClass = CodeGenerator.GenDtoClass(vm.Namespace, vm.InterfaceName, table + "Dto", properties);
+                var dtoClass = CodeGenerator.GenDtoClassImplementINotifyPropertyChanged(vm.Namespace, vm.InterfaceName, table + "Dto", properties);
                 var path = vm.OutputPath + "\\" + table + "Dto.cs";
                 System.IO.File.WriteAllText(path, dtoClass, Encoding.UTF8);
             }

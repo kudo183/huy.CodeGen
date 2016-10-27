@@ -43,9 +43,13 @@ namespace huy.CodeGen
             table.Refresh();
             foreach (Microsoft.SqlServer.Management.Smo.Column item in table.Columns)
             {
+                var propertyType = _typeMapping[item.DataType.Name];
+                if (item.Nullable == true && propertyType != "string")
+                    propertyType = propertyType + "?";
+
                 result.Add(new EntityProperty()
                 {
-                    PropertyType = _typeMapping[item.DataType.Name],
+                    PropertyType = propertyType,
                     PropertyName = item.Name,
                     IsForeignKey = item.IsForeignKey
                 });

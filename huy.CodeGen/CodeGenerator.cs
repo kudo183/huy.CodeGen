@@ -6,6 +6,76 @@ namespace huy.CodeGen
 {
     public static class CodeGenerator
     {
+        public static string GenDtoClassImplementINotifyPropertyChanged(string nameSpace, string interfaceName, string className, List<EntityProperty> properties)
+        {
+            var sb = new StringBuilder();
+            var tab = "    ";
+            var tab2 = tab + tab;
+            var tab3 = tab2 + tab;
+            sb.AppendLine("using System.ComponentModel;");
+            sb.AppendLine();
+            sb.AppendFormat("namespace {0}\r\n", nameSpace);
+            sb.AppendLine("{");
+            sb.AppendFormat("{0}[ProtoBuf.ProtoContract]\r\n", tab);
+            sb.AppendFormat("{0}public partial class {1} : {2}, INotifyPropertyChanged\r\n", tab, className, interfaceName);
+            sb.AppendLine(tab + "{");
+            foreach (var item in properties)
+            {
+                sb.AppendFormat("{0}{1} o{2};\r\n", tab2, item.PropertyType, item.PropertyName);
+            }
+            sb.AppendLine();
+            foreach (var item in properties)
+            {
+                sb.AppendFormat("{0}{1} _{2};\r\n", tab2, item.PropertyType, item.PropertyName);
+            }
+            sb.AppendLine();
+            for (var i = 0; i < properties.Count; i++)
+            {
+                var item = properties[i];
+                sb.AppendFormat("{0}[ProtoBuf.ProtoMember({1})]\r\n", tab2, i + 1);
+                sb.AppendLine(GenProperty(tab2, item.PropertyType, item.PropertyName));
+            }
+            sb.AppendLine();
+            sb.AppendFormat("{0}public void SetCurrentValueAsOriginalValue()\r\n", tab2);
+            sb.AppendLine(tab2 + "{");
+            foreach (var item in properties)
+            {
+                sb.AppendFormat("{0}o{1} = {2};\r\n", tab3, item.PropertyName, item.PropertyName);
+            }
+            sb.AppendLine(tab2 + "}");
+            sb.AppendLine();
+            sb.AppendFormat("{0}public bool HasChange()\r\n", tab2);
+            sb.AppendLine(tab2 + "{");
+            sb.AppendFormat("{0}return (o{1} != {2})\r\n", tab3, properties[0].PropertyName, properties[0].PropertyName);
+            for (var i = 1; i < properties.Count; i++)
+            {
+                var item = properties[i];
+                sb.AppendFormat("{0}|| (o{1} != {2})\r\n", tab3, item.PropertyName, item.PropertyName);
+            }
+            sb.AppendLine(";");
+            sb.AppendLine(tab2 + "}");
+            sb.AppendLine();
+            foreach (var item in properties.Where(p => p.IsForeignKey))
+            {
+                sb.AppendFormat("{0}{1} _{2}Sources;\r\n", tab2, "object", item.PropertyName);
+            }
+            sb.AppendLine();
+            foreach (var item in properties.Where(p => p.IsForeignKey))
+            {
+                sb.AppendFormat("{0}[Newtonsoft.Json.JsonIgnore]\r\n", tab2);
+                sb.AppendLine(GenProperty(tab2, "object", item.PropertyName + "Sources"));
+            }
+            sb.AppendLine();
+            sb.AppendFormat("{0}public event PropertyChangedEventHandler PropertyChanged;\r\n", tab2);
+            sb.AppendFormat("{0}public virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string name = null)\r\n", tab2);
+            sb.AppendLine(tab2 + "{");
+            sb.AppendFormat("{0}PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));\r\n", tab3);
+            sb.AppendLine(tab2 + "}");
+            sb.AppendLine(tab + "}");
+            sb.AppendLine("}");
+            return sb.ToString();
+        }
+
         public static string GenDtoClass(string nameSpace, string interfaceName, string className, List<EntityProperty> properties)
         {
             var sb = new StringBuilder();
@@ -15,7 +85,7 @@ namespace huy.CodeGen
             sb.AppendLine("namespace " + nameSpace);
             sb.AppendLine("{");
             sb.AppendLine(tab + "[ProtoBuf.ProtoContract]");
-            sb.AppendLine(tab + "public class " + className + " : " + interfaceName);
+            sb.AppendLine(tab + "public partial class " + className + " : " + interfaceName);
             sb.AppendLine(tab + "{");
             foreach (var item in properties)
             {
@@ -115,7 +185,7 @@ namespace huy.CodeGen
             sb.AppendLine(tab + "public static class TextManager");
             sb.AppendLine(tab + "{");
             sb.AppendLine(tab2 + "static readonly Dictionary<string, string> _dic = new Dictionary<string, string>();");
-            sb.AppendLine(string.Format("{0}static readonly string DefaultLanguage = \"{1}\";",tab2, defaultLanguage));
+            sb.AppendLine(string.Format("{0}static readonly string DefaultLanguage = \"{1}\";", tab2, defaultLanguage));
             sb.AppendLine();
             sb.AppendLine(tab2 + "static TextManager()");
             sb.AppendLine(tab2 + "{");
@@ -174,6 +244,12 @@ namespace huy.CodeGen
             sb.AppendLine(tab + "}");
             sb.AppendLine("}");
             return sb.ToString();
+        }
+
+        private static string GenProperty(string tab, string propertyType, string propertyName)
+        {
+            return string.Format("{0}public {1} {2} {{ get {{ return _{2}; }} set {{ _{2} = value; OnPropertyChanged(); }} }}",
+                    tab, propertyType, propertyName);
         }
     }
 }
