@@ -14,14 +14,11 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <TextBlock Text="Namespace"/>
         <TextBox Text="{Binding Namespace}" Grid.Column="1"/>
-        <TextBlock Text="ContextName" Grid.Row="1"/>
-        <TextBox Text="{Binding ContextName}" Grid.Column="1" Grid.Row="1"/>
-        <TabControl Grid.Row="2" Grid.ColumnSpan="2">
+        <TabControl Grid.Row="1" Grid.ColumnSpan="2">
             <TabItem Header="From Database">
                 <Grid>
                     <Grid.ColumnDefinitions>
