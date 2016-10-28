@@ -6,6 +6,8 @@ namespace huy.CodeGen
 {
     public static class CodeGenerator
     {
+        private static readonly string LineEnding = "\r\n";
+
         public static string GenDtoClassImplementINotifyPropertyChanged(string nameSpace, string interfaceName, string className, List<EntityProperty> properties)
         {
             var sb = new StringBuilder();
@@ -246,10 +248,127 @@ namespace huy.CodeGen
             return sb.ToString();
         }
 
+        public static string GenViewModelClass(string nameSpace, string entityClassName, List<EntityProperty> properties)
+        {
+            var sb = new StringBuilder();
+            var dtoClassName = entityClassName + "Dto";
+            var className = entityClassName + "ViewModel";
+            var hasForeignKey = properties.Any(p => p.IsForeignKey == true);
+            var tab = "    ";
+            var tab2 = tab + tab;
+            var tab3 = tab2 + tab;
+            var tab4 = tab3 + tab;
+            sb.AppendLine("using Client;");
+            sb.AppendLine("using Client.Abstraction;");
+            sb.AppendLine("using DTO;");
+            sb.AppendLine("using SimpleDataGrid.ViewModel;");
+            sb.AppendLine();
+            sb.AppendLine("namespace " + nameSpace);
+            sb.AppendLine("{");
+            sb.AppendFormat("{0}public partial class {1} : BaseViewModel<{2}>{3}", tab, className, dtoClassName, LineEnding);
+            sb.AppendLine(tab + "{");
+            sb.AppendLine(tab2 + "partial void InitFilterPartial();");
+            if (hasForeignKey == true)
+            {
+                sb.AppendLine(tab2 + "partial void LoadReferenceDataPartial();");
+            }
+            sb.AppendFormat("{0}partial void ProcessDtoBeforeAddToEntitiesPartial({1} dto);{2}", tab2, dtoClassName, LineEnding);
+            sb.AppendFormat("{0}partial void ProcessNewAddedDtoPartial({1} dto);{2}", tab2, dtoClassName, LineEnding);
+            sb.AppendLine();
+            foreach (var item in properties)
+            {
+                var filterType = GetFilterTypeFromProperty(item);
+                sb.AppendFormat("{0}{1} _{2}Filter;{3}",
+                    tab2, filterType, item.PropertyName, LineEnding);
+            }
+            sb.AppendLine();
+            sb.AppendFormat("{0}public {1}() : base(){2}", tab2, className, LineEnding);
+            sb.AppendLine(tab2 + "{");
+            foreach (var item in properties.Where(p => p.IsForeignKey == false))
+            {
+                var filterType = GetFilterTypeFromProperty(item);
+                sb.AppendFormat("{0}_{1}Filter = new {2}(TextManager.{3}_{4}, nameof({5}.{4}), typeof({6}));{7}",
+                    tab3, item.PropertyName, filterType, entityClassName, item.PropertyName, dtoClassName, item.PropertyType, LineEnding);
+            }
+            sb.AppendLine();
+            sb.AppendLine(tab3 + "InitFilterPartial();");
+            sb.AppendLine();
+            foreach (var item in properties)
+            {
+                sb.AppendFormat("{0}AddHeaderFilter(_{1}Filter);{2}", tab3, item.PropertyName, LineEnding);
+            }
+            sb.AppendLine(tab2 + "}");
+            if (hasForeignKey == true)
+            {
+                sb.AppendLine();
+                sb.AppendLine(tab2 + "public override void LoadReferenceData()");
+                sb.AppendLine(tab2 + "{");
+                foreach (var item in properties.Where(p => p.IsForeignKey == true))
+                {
+                    sb.AppendFormat("{0}ReferenceDataManager<{1}Dto>.Instance.Load();{2}", tab3, item.ForeignKeyTableName, LineEnding);
+                }
+                sb.AppendLine();
+                sb.AppendLine(tab3 + "LoadReferenceDataPartial();");
+                sb.AppendLine(tab2 + "}");
+            }
+            sb.AppendLine();
+            sb.AppendFormat("{0}protected override void ProcessDtoBeforeAddToEntities({1} dto){2}", tab2, dtoClassName, LineEnding);
+            sb.AppendLine(tab2 + "{");
+            foreach (var item in properties.Where(p => p.IsForeignKey == true))
+            {
+                sb.AppendFormat("{0}dto.{1}Sources = ReferenceDataManager<{2}Dto>.Instance.Get();{3}",
+                    tab3, item.PropertyName, item.ForeignKeyTableName, LineEnding);
+            }
+            sb.AppendLine();
+            sb.AppendLine(tab3 + "ProcessDtoBeforeAddToEntitiesPartial(dto);");
+            sb.AppendLine(tab2 + "}");
+            sb.AppendLine();
+            sb.AppendFormat("{0}protected override void ProcessNewAddedDto({1} dto){2}", tab2, dtoClassName, LineEnding);
+            sb.AppendLine(tab2 + "{");
+            foreach (var item in properties)
+            {
+                sb.AppendFormat("{0}if (_{1}Filter.FilterValue != null){2}", tab3, item.PropertyName, LineEnding);
+                sb.AppendLine(tab3 + "{");
+                sb.AppendFormat("{0}dto.{1} = ({2})_{1}Filter.FilterValue;{3}",
+                    tab4, item.PropertyName, item.PropertyType, LineEnding);
+                sb.AppendLine(tab3 + "}");
+            }
+            sb.AppendLine();
+            sb.AppendLine(tab3 + "ProcessNewAddedDtoPartial(dto);");
+            sb.AppendLine(tab3 + "ProcessDtoBeforeAddToEntities(dto);");
+            sb.AppendLine(tab2 + "}");
+            sb.AppendLine(tab + "}");
+            sb.AppendLine("}");
+            return sb.ToString();
+        }
+
         private static string GenProperty(string tab, string propertyType, string propertyName)
         {
             return string.Format("{0}public {1} {2} {{ get {{ return _{2}; }} set {{ _{2} = value; OnPropertyChanged(); }} }}",
                     tab, propertyType, propertyName);
+        }
+
+        private static string GetFilterTypeFromProperty(EntityProperty property)
+        {
+            if (property.IsForeignKey == true)
+            {
+                return "HeaderComboBoxFilterModel";
+            }
+            var propertyType = property.PropertyType;
+            if (propertyType == "string" || propertyType == "int" || propertyType == "int?")
+            {
+                return "HeaderTextFilterModel";
+            }
+            else if (propertyType == "bool" || propertyType == "bool?")
+            {
+                return "HeaderCheckFilterModel";
+            }
+            else if (propertyType == "System.DateTime" || propertyType == "System.DateTime?")
+            {
+                return "HeaderDateFilterModel";
+            }
+
+            return "HeaderTextFilterModel";
         }
     }
 }

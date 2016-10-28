@@ -11,5 +11,6 @@ namespace huy.CodeGen
         public string PropertyType;
         public string PropertyName;
         public bool IsForeignKey;
+        public string ForeignKeyTableName;
     }
 }

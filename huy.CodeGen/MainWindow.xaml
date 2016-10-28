@@ -17,5 +17,8 @@
         <TabItem Header="TextManager" IsSelected="True">
             <local:GenTextManager/>
         </TabItem>
+        <TabItem Header="ViewModel">
+            <local:GenViewModel/>
+        </TabItem>
     </TabControl>
 </Window>

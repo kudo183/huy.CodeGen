@@ -27,8 +27,7 @@ namespace huy.CodeGen
             db.Refresh();
             foreach (Microsoft.SqlServer.Management.Smo.Table item in db.Tables)
             {
-                var upperFirstLetterName = item.Name[0].ToString().ToUpper() + item.Name.Substring(1);
-                tables.Add(upperFirstLetterName);
+                tables.Add(UpperFirstLetter(item.Name));
             }
             return tables;
         }
@@ -41,18 +40,28 @@ namespace huy.CodeGen
             var db = new Microsoft.SqlServer.Management.Smo.Database(server, dbName);
             var table = new Microsoft.SqlServer.Management.Smo.Table(db, tableName);
             table.Refresh();
+            var dic = new Dictionary<string, string>();
+            foreach (Microsoft.SqlServer.Management.Smo.ForeignKey item in table.ForeignKeys)
+            {
+                dic.Add(item.Columns[0].Name, item.ReferencedTable);
+            }
             foreach (Microsoft.SqlServer.Management.Smo.Column item in table.Columns)
             {
                 var propertyType = _typeMapping[item.DataType.Name];
                 if (item.Nullable == true && propertyType != "string")
                     propertyType = propertyType + "?";
 
-                result.Add(new EntityProperty()
+                var entityProperty = new EntityProperty()
                 {
                     PropertyType = propertyType,
                     PropertyName = item.Name,
                     IsForeignKey = item.IsForeignKey
-                });
+                };
+                if (item.IsForeignKey == true)
+                {
+                    entityProperty.ForeignKeyTableName = UpperFirstLetter(dic[item.Name]);
+                }
+                result.Add(entityProperty);
             }
             return result;
         }
@@ -65,6 +74,11 @@ namespace huy.CodeGen
                 sb.AppendLine(item);
             }
             return sb.ToString();
+        }
+
+        public static string UpperFirstLetter(string text)
+        {
+            return text[0].ToString().ToUpper() + text.Substring(1);
         }
     }
 }
