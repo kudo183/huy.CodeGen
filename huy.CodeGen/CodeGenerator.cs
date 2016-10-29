@@ -258,9 +258,9 @@ namespace huy.CodeGen
             var tab2 = tab + tab;
             var tab3 = tab2 + tab;
             var tab4 = tab3 + tab;
-            sb.AppendLine("using Client;");
             sb.AppendLine("using Client.Abstraction;");
             sb.AppendLine("using DTO;");
+            sb.AppendLine("using SimpleDataGrid;");
             sb.AppendLine("using SimpleDataGrid.ViewModel;");
             sb.AppendLine();
             sb.AppendLine("namespace " + nameSpace);
@@ -284,13 +284,30 @@ namespace huy.CodeGen
             sb.AppendLine();
             sb.AppendFormat("{0}public {1}() : base(){2}", tab2, className, LineEnding);
             sb.AppendLine(tab2 + "{");
-            foreach (var item in properties.Where(p => p.IsForeignKey == false))
+            foreach (var item in properties)
             {
-                var filterType = GetFilterTypeFromProperty(item);
-                sb.AppendFormat("{0}_{1}Filter = new {2}(TextManager.{3}_{4}, nameof({5}.{4}), typeof({6}));{7}",
-                    tab3, item.PropertyName, filterType, entityClassName, item.PropertyName, dtoClassName, item.PropertyType, LineEnding);
+                if (item.IsForeignKey == true)
+                {
+                    sb.AppendFormat("{0}_{1}Filter = new HeaderComboBoxFilterModel({2}", tab3, item.PropertyName, LineEnding);
+                    sb.AppendFormat("{0}TextManager.{1}_{2}, HeaderComboBoxFilterModel.ComboBoxFilter,{3}", tab4, entityClassName, item.PropertyName, LineEnding);
+                    sb.AppendFormat("{0}nameof({1}.{2}),{3}", tab4, dtoClassName, item.PropertyName, LineEnding);
+                    sb.AppendFormat("{0}typeof({1}),{2}", tab4, item.PropertyType, LineEnding);
+                    sb.AppendFormat("{0}nameof({1}Dto.TenHienThi),{2}", tab4, item.ForeignKeyTableName, LineEnding);
+                    sb.AppendFormat("{0}nameof({1}Dto.Ma));{2}", tab4, item.ForeignKeyTableName, LineEnding);
+                    sb.AppendFormat("{0}_{1}Filter.AddCommand = new SimpleCommand(\"{1}AddCommand\",{2}", tab3, item.PropertyName, LineEnding);
+                    sb.AppendLine(tab4 + "() => base.ProccessHeaderAddCommand(");
+                    sb.AppendFormat("{0}new View.{1}View(), \"{1}\", ReferenceDataManager<{1}Dto>.Instance.Load){2}", tab4, item.ForeignKeyTableName, LineEnding);
+                    sb.AppendLine(tab3 + ");");
+                    sb.AppendFormat("{0}_{1}Filter.ItemSource = ReferenceDataManager<{2}Dto>.Instance.Get();{3}", tab3, item.PropertyName, item.ForeignKeyTableName, LineEnding);
+                }
+                else
+                {
+                    var filterType = GetFilterTypeFromProperty(item);
+                    sb.AppendFormat("{0}_{1}Filter = new {2}(TextManager.{3}_{4}, nameof({5}.{4}), typeof({6}));{7}",
+                        tab3, item.PropertyName, filterType, entityClassName, item.PropertyName, dtoClassName, item.PropertyType, LineEnding);
+                }
+                sb.AppendLine();
             }
-            sb.AppendLine();
             sb.AppendLine(tab3 + "InitFilterPartial();");
             sb.AppendLine();
             foreach (var item in properties)
@@ -373,7 +390,7 @@ namespace huy.CodeGen
                 {
                     sb.AppendFormat("{0}<SimpleDataGrid:DataGridComboBoxColumnExt Header=\"{1}\"{2}", tab3, item.PropertyName, LineEnding);
                     sb.AppendLine(tab4 + "SelectedValuePath=\"Ma\"");
-                    sb.AppendLine(tab4 + "DisplayMemberPath=\"\"");
+                    sb.AppendLine(tab4 + "DisplayMemberPath=\"TenHienThi\"");
                     sb.AppendFormat("{0}SelectedValueBinding=\"{{Binding {1}, UpdateSourceTrigger=PropertyChanged}}\"{2}", tab4, item.PropertyName, LineEnding);
                     sb.AppendFormat("{0}ItemsSource=\"{{Binding {1}Sources}}\"/>{2}", tab4, item.PropertyName, LineEnding);
                 }

@@ -28,7 +28,7 @@ namespace huy.CodeGen
             sb.Append("bool Xong");
             vm.PropertyList = sb.ToString();
             vm.DatabaseName = "PhuDinhClientServer";
-            vm.SkippedTable = "__EFMigrationsHistory;User";
+            vm.SkippedTable = "__EFMigrationsHistory";
             vm.OutputPath = @"C:\codegen\View";
             DataContext = vm;
 
