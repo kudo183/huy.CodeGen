@@ -10,6 +10,7 @@ namespace huy.CodeGen
     {
         public string PropertyType;
         public string PropertyName;
+        public bool IsIdentity;
         public bool IsForeignKey;
         public string ForeignKeyTableName;
     }

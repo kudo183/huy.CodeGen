@@ -342,6 +342,53 @@ namespace huy.CodeGen
             return sb.ToString();
         }
 
+        public static string GenViewClass(string nameSpace, string entityClassName, List<EntityProperty> properties)
+        {
+            var sb = new StringBuilder();
+            var dtoClassName = entityClassName + "Dto";
+            var className = entityClassName + "View";
+            var hasForeignKey = properties.Any(p => p.IsForeignKey == true);
+            var tab = "    ";
+            var tab2 = tab + tab;
+            var tab3 = tab2 + tab;
+            var tab4 = tab3 + tab;
+            sb.AppendFormat("<Abstraction:BaseView x:TypeArguments = \"Dto:{0}\"{1}", dtoClassName, LineEnding);
+            sb.AppendFormat("{0}x:Class=\"{1}.{2}\"{3}", tab, nameSpace, className, LineEnding);
+            sb.AppendLine(tab + "xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\"");
+            sb.AppendLine(tab + "xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\"");
+            sb.AppendLine(tab + "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"");
+            sb.AppendLine(tab + "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"");
+            sb.AppendLine(tab + "xmlns:SimpleDataGrid=\"clr-namespace:SimpleDataGrid;assembly=SimpleDataGrid\"");
+            sb.AppendLine(tab + "xmlns:Dto=\"clr-namespace:DTO;assembly=DTO\"");
+            sb.AppendLine(tab + "xmlns:Abstraction=\"clr-namespace:Client.Abstraction;assembly=Client.Abstraction\">");
+            sb.AppendLine(tab + "<SimpleDataGrid:EditableGridView>");
+            sb.AppendLine(tab2 + "<SimpleDataGrid:EditableGridView.Columns>");
+            foreach (var item in properties)
+            {
+                if (item.IsIdentity == true)
+                {
+                    sb.AppendFormat("{0}<SimpleDataGrid:DataGridTextColumnExt Width=\"80\" Header=\"{1}\" IsReadOnly=\"True\" Binding=\"{{Binding {1}, Mode=OneWay}}\"/>{2}", tab3, item.PropertyName, LineEnding);
+                }
+                else if (item.IsForeignKey == true)
+                {
+                    sb.AppendFormat("{0}<SimpleDataGrid:DataGridComboBoxColumnExt Header=\"{1}\"{2}", tab3, item.PropertyName, LineEnding);
+                    sb.AppendLine(tab4 + "SelectedValuePath=\"Ma\"");
+                    sb.AppendLine(tab4 + "DisplayMemberPath=\"\"");
+                    sb.AppendFormat("{0}SelectedValueBinding=\"{{Binding {1}, UpdateSourceTrigger=PropertyChanged}}\"{2}", tab4, item.PropertyName, LineEnding);
+                    sb.AppendFormat("{0}ItemsSource=\"{{Binding {1}Sources}}\"/>{2}", tab4, item.PropertyName, LineEnding);
+                }
+                else
+                {
+                    var columnType = GetDataGridColumnTypeFromProperty(item);
+                    sb.AppendFormat("{0}<SimpleDataGrid:{1} Header=\"{2}\" Binding=\"{{Binding {2}, UpdateSourceTrigger=PropertyChanged}}\"/>{3}", tab4, columnType, item.PropertyName, LineEnding);
+                }
+            }
+            sb.AppendLine(tab2 + "</SimpleDataGrid:EditableGridView.Columns>");
+            sb.AppendLine(tab + "</SimpleDataGrid:EditableGridView>");
+            sb.AppendLine("</Abstraction:BaseView>");
+            return sb.ToString();
+        }
+
         private static string GenProperty(string tab, string propertyType, string propertyName)
         {
             return string.Format("{0}public {1} {2} {{ get {{ return _{2}; }} set {{ _{2} = value; OnPropertyChanged(); }} }}",
@@ -369,6 +416,33 @@ namespace huy.CodeGen
             }
 
             return "HeaderTextFilterModel";
+        }
+
+        private static string GetDataGridColumnTypeFromProperty(EntityProperty property)
+        {
+            if (property.IsIdentity == true)
+            {
+                return "DataGridTextColumnExt";
+            }
+            if (property.IsForeignKey == true)
+            {
+                return "DataGridComboBoxColumnExt";
+            }
+            var propertyType = property.PropertyType;
+            if (propertyType == "string" || propertyType == "int" || propertyType == "int?")
+            {
+                return "DataGridTextColumnExt";
+            }
+            else if (propertyType == "bool" || propertyType == "bool?")
+            {
+                return "DataGridCheckBoxColumnExt";
+            }
+            else if (propertyType == "System.DateTime" || propertyType == "System.DateTime?")
+            {
+                return "DataGridDateColumn";
+            }
+
+            return "DataGridTextColumnExt";
         }
     }
 }

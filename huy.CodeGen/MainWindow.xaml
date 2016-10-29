@@ -14,11 +14,14 @@
         <TabItem Header="Controller">
             <local:GenController/>
         </TabItem>
-        <TabItem Header="TextManager" IsSelected="True">
+        <TabItem Header="TextManager">
             <local:GenTextManager/>
         </TabItem>
         <TabItem Header="ViewModel">
             <local:GenViewModel/>
+        </TabItem>
+        <TabItem Header="View" IsSelected="True">
+            <local:GenView/>
         </TabItem>
     </TabControl>
 </Window>

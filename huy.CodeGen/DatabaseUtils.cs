@@ -55,7 +55,8 @@ namespace huy.CodeGen
                 {
                     PropertyType = propertyType,
                     PropertyName = item.Name,
-                    IsForeignKey = item.IsForeignKey
+                    IsForeignKey = item.IsForeignKey,
+                    IsIdentity = item.Identity
                 };
                 if (item.IsForeignKey == true)
                 {

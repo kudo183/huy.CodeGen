@@ -6,20 +6,20 @@ using System.Windows.Controls;
 namespace huy.CodeGen
 {
     /// <summary>
-    /// Interaction logic for GenViewModel.xaml
+    /// Interaction logic for GenView.xaml
     /// </summary>
-    public partial class GenViewModel : UserControl
+    public partial class GenView : UserControl
     {
-        GenViewModelViewModel vm;
-        public GenViewModel()
+        GenViewViewModel vm;
+        public GenView()
         {
             InitializeComponent();
 
-            vm = new GenViewModelViewModel();
-            vm.Namespace = "Client.ViewModel";
+            vm = new GenViewViewModel();
+            vm.Namespace = "Client.View";
             vm.EnityClassName = "TDonHang";
             var sb = new StringBuilder();
-            sb.AppendLine("int Ma");
+            sb.AppendLine("int Ma i");
             sb.AppendLine("int? MaChanh RChanh");
             sb.AppendLine("int MaKhachHang RKhachHang");
             sb.AppendLine("int MaKhoHang RKhoHang");
@@ -29,8 +29,15 @@ namespace huy.CodeGen
             vm.PropertyList = sb.ToString();
             vm.DatabaseName = "PhuDinhClientServer";
             vm.SkippedTable = "__EFMigrationsHistory;User";
-            vm.OutputPath = @"C:\codegen\ViewModel";
+            vm.OutputPath = @"C:\codegen\View";
             DataContext = vm;
+
+            Loaded += GenView_Loaded;
+        }
+
+        private void GenView_Loaded(object sender, RoutedEventArgs e)
+        {
+            Button_Click(null, null);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -48,13 +55,20 @@ namespace huy.CodeGen
                 var property = new EntityProperty() { PropertyType = p[0], PropertyName = p[1] };
                 if (p.Length == 3)
                 {
-                    property.IsForeignKey = true;
-                    property.ForeignKeyTableName = p[2];
+                    if (p[2] == "i")
+                    {
+                        property.IsIdentity = true;
+                    }
+                    else
+                    {
+                        property.IsForeignKey = true;
+                        property.ForeignKeyTableName = p[2];
+                    }
                 }
                 propertiesList.Add(property);
             }
 
-            vm.Result = CodeGenerator.GenViewModelClass(vm.Namespace, vm.EnityClassName, propertiesList);
+            vm.Result = CodeGenerator.GenViewClass(vm.Namespace, vm.EnityClassName, propertiesList);
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -67,9 +81,23 @@ namespace huy.CodeGen
                     continue;
 
                 var properties = DatabaseUtils.ListColumnsOfTable(vm.DatabaseName, table);
-                var dtoClass = CodeGenerator.GenViewModelClass(vm.Namespace, table, properties);
-                var path = vm.OutputPath + "\\" + table + "ViewModel.cs";
+                var dtoClass = CodeGenerator.GenViewClass(vm.Namespace, table, properties);
+                var path = vm.OutputPath + "\\" + table + "View.xaml";
                 System.IO.File.WriteAllText(path, dtoClass, Encoding.UTF8);
+
+                var sb = new StringBuilder();
+                sb.AppendLine("using Client.Abstraction;");
+                sb.AppendLine("namespace " + vm.Namespace);
+                sb.AppendLine("{");
+                sb.AppendLine(string.Format("    public partial class {0}View : BaseView<DTO.{0}Dto>", table));
+                sb.AppendLine("    {");
+                sb.AppendLine(string.Format("        public {0}View() : base()", table));
+                sb.AppendLine("        {");
+                sb.AppendLine("            InitializeComponent();");
+                sb.AppendLine("        }");
+                sb.AppendLine("    }");
+                sb.AppendLine("}");
+                System.IO.File.WriteAllText(path + ".cs", sb.ToString(), Encoding.UTF8);
             }
         }
     }

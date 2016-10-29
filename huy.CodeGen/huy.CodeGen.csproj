@@ -56,6 +56,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="GenView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="GenViewModel.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -83,6 +87,10 @@
     <Compile Include="CodeGenerator.cs" />
     <Compile Include="DatabaseUtils.cs" />
     <Compile Include="EntityProperty.cs" />
+    <Compile Include="GenView.xaml.cs">
+      <DependentUpon>GenView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="GenViewViewModel.cs" />
     <Compile Include="GenViewModelViewModel.cs" />
     <Compile Include="GenViewModel.xaml.cs">
       <DependentUpon>GenViewModel.xaml</DependentUpon>
