@@ -91,9 +91,13 @@ namespace huy.CodeGen
                 sb.AppendLine("{");
                 sb.AppendLine(string.Format("    public partial class {0}View : BaseView<DTO.{0}Dto>", table));
                 sb.AppendLine("    {");
+                sb.AppendLine(string.Format("        partial void InitUIPartial();"));
+                sb.AppendLine();
                 sb.AppendLine(string.Format("        public {0}View() : base()", table));
                 sb.AppendLine("        {");
                 sb.AppendLine("            InitializeComponent();");
+                sb.AppendLine();
+                sb.AppendLine("            InitUIPartial();");
                 sb.AppendLine("        }");
                 sb.AppendLine("    }");
                 sb.AppendLine("}");

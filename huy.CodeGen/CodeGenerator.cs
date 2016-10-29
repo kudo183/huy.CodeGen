@@ -369,7 +369,7 @@ namespace huy.CodeGen
             var tab2 = tab + tab;
             var tab3 = tab2 + tab;
             var tab4 = tab3 + tab;
-            sb.AppendFormat("<Abstraction:BaseView x:TypeArguments = \"Dto:{0}\"{1}", dtoClassName, LineEnding);
+            sb.AppendFormat("<Abstraction:BaseView x:TypeArguments=\"Dto:{0}\"{1}", dtoClassName, LineEnding);
             sb.AppendFormat("{0}x:Class=\"{1}.{2}\"{3}", tab, nameSpace, className, LineEnding);
             sb.AppendLine(tab + "xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\"");
             sb.AppendLine(tab + "xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\"");
@@ -397,7 +397,7 @@ namespace huy.CodeGen
                 else
                 {
                     var columnType = GetDataGridColumnTypeFromProperty(item);
-                    sb.AppendFormat("{0}<SimpleDataGrid:{1} Header=\"{2}\" Binding=\"{{Binding {2}, UpdateSourceTrigger=PropertyChanged}}\"/>{3}", tab4, columnType, item.PropertyName, LineEnding);
+                    sb.AppendFormat("{0}<SimpleDataGrid:{1} Header=\"{2}\" Binding=\"{{Binding {2}, UpdateSourceTrigger=PropertyChanged}}\"/>{3}", tab3, columnType, item.PropertyName, LineEnding);
                 }
             }
             sb.AppendLine(tab2 + "</SimpleDataGrid:EditableGridView.Columns>");
