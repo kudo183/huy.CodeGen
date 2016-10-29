@@ -213,7 +213,7 @@ namespace huy.CodeGen
             sb.AppendLine(tab4 + "var line = sr.ReadLine();");
             sb.AppendLine(tab4 + "while (string.IsNullOrEmpty(line) == false)");
             sb.AppendLine(tab4 + "{");
-            sb.AppendLine(tab5 + "var texts = line.Split(new[] { \"\\t\\t\" }, System.StringSplitOptions.RemoveEmptyEntries);");
+            sb.AppendLine(tab5 + "var texts = line.Split(new[] { \"\\t\\t\" }, System.StringSplitOptions.None);");
             sb.AppendLine(tab5 + "_dic.Add(texts[0], texts[1]);");
             sb.AppendLine(tab5 + "line = sr.ReadLine();");
             sb.AppendLine(tab4 + "}");
