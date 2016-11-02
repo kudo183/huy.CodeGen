@@ -258,6 +258,7 @@ namespace huy.CodeGen
             var tab2 = tab + tab;
             var tab3 = tab2 + tab;
             var tab4 = tab3 + tab;
+            var tab5 = tab4 + tab;
             sb.AppendLine("using Client.Abstraction;");
             sb.AppendLine("using DTO;");
             sb.AppendLine("using SimpleDataGrid;");
@@ -278,8 +279,8 @@ namespace huy.CodeGen
             foreach (var item in properties)
             {
                 var filterType = GetFilterTypeFromProperty(item);
-                sb.AppendFormat("{0}{1} _{2}Filter;{3}",
-                    tab2, filterType, item.PropertyName, LineEnding);
+                sb.AppendFormat("{0}HeaderFilterBaseModel _{1}Filter;{2}",
+                    tab2, item.PropertyName, LineEnding);
             }
             sb.AppendLine();
             sb.AppendFormat("{0}public {1}() : base(){2}", tab2, className, LineEnding);
@@ -293,12 +294,13 @@ namespace huy.CodeGen
                     sb.AppendFormat("{0}nameof({1}.{2}),{3}", tab4, dtoClassName, item.PropertyName, LineEnding);
                     sb.AppendFormat("{0}typeof({1}),{2}", tab4, item.PropertyType, LineEnding);
                     sb.AppendFormat("{0}nameof({1}Dto.TenHienThi),{2}", tab4, item.ForeignKeyTableName, LineEnding);
-                    sb.AppendFormat("{0}nameof({1}Dto.Ma));{2}", tab4, item.ForeignKeyTableName, LineEnding);
-                    sb.AppendFormat("{0}_{1}Filter.AddCommand = new SimpleCommand(\"{1}AddCommand\",{2}", tab3, item.PropertyName, LineEnding);
-                    sb.AppendLine(tab4 + "() => base.ProccessHeaderAddCommand(");
-                    sb.AppendFormat("{0}new View.{1}View(), \"{1}\", ReferenceDataManager<{1}Dto>.Instance.Load){2}", tab4, item.ForeignKeyTableName, LineEnding);
-                    sb.AppendLine(tab3 + ");");
-                    sb.AppendFormat("{0}_{1}Filter.ItemSource = ReferenceDataManager<{2}Dto>.Instance.Get();{3}", tab3, item.PropertyName, item.ForeignKeyTableName, LineEnding);
+                    sb.AppendFormat("{0}nameof({1}Dto.Ma)){2}", tab4, item.ForeignKeyTableName, LineEnding);
+                    sb.AppendLine(tab3 + "{");
+                    sb.AppendFormat("{0}AddCommand = new SimpleCommand(\"{1}AddCommand\",{2}", tab4, item.PropertyName, LineEnding);
+                    sb.AppendLine(tab5 + "() => base.ProccessHeaderAddCommand(");
+                    sb.AppendFormat("{0}new View.{1}View(), \"{1}\", ReferenceDataManager<{1}Dto>.Instance.Load)),{2}", tab5, item.ForeignKeyTableName, LineEnding);
+                    sb.AppendFormat("{0}ItemSource = ReferenceDataManager<{1}Dto>.Instance.Get(){2}", tab4, item.ForeignKeyTableName, LineEnding);
+                    sb.AppendLine(tab3 + "};");
                 }
                 else
                 {
