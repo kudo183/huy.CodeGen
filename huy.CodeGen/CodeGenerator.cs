@@ -143,26 +143,35 @@ namespace huy.CodeGen
             sb.AppendLine();
             sb.AppendLine("namespace " + nameSpace);
             sb.AppendLine("{");
-            sb.AppendLine(string.Format("{0}public partial class {1}Controller : SwaEntityBaseController<{2}, {1}, {1}Dto>", tab, enityClassName, contextName));
+            sb.AppendFormat("{0}public partial class {1}Controller : SwaEntityBaseController<{2}, {1}, {1}Dto>{3}", tab, enityClassName, contextName, LineEnding);
             sb.AppendLine(tab + "{");
-            sb.AppendLine(string.Format("{0}public override {1}Dto ConvertToDto({1} entity)", tab2, enityClassName));
+            sb.AppendFormat("{0}partial void ConvertToDtoPartial(ref {1}Dto dto, {1} entity);{2}", tab2, enityClassName, LineEnding);
+            sb.AppendFormat("{0}partial void ConvertToEntityPartial(ref {1} entity, {1}Dto dto);{2}", tab2, enityClassName, LineEnding);
+            sb.AppendLine();
+            sb.AppendFormat("{0}public override {1}Dto ConvertToDto({1} entity){2}", tab2, enityClassName, LineEnding);
             sb.AppendLine(tab2 + "{");
-            sb.AppendLine(string.Format("{0}var dto = new {1}Dto();", tab3, enityClassName));
+            sb.AppendFormat("{0}var dto = new {1}Dto();{2}", tab3, enityClassName, LineEnding);
             foreach (var item in properties)
             {
-                sb.AppendLine(string.Format("{0}dto.{1} = entity.{1};", tab3, item.PropertyName));
+                sb.AppendFormat("{0}dto.{1} = entity.{1};{2}", tab3, item.PropertyName, LineEnding);
             }
-            sb.AppendLine(string.Format("{0}return dto;", tab3, enityClassName));
+            sb.AppendLine();
+            sb.AppendLine(tab3 + "ConvertToDtoPartial(ref dto, entity);");
+            sb.AppendLine();
+            sb.AppendLine(tab3 + "return dto;");
             sb.AppendLine(tab2 + "}");
             sb.AppendLine();
-            sb.AppendLine(string.Format("{0}public override {1} ConvertToEntity({1}Dto dto)", tab2, enityClassName));
+            sb.AppendFormat("{0}public override {1} ConvertToEntity({1}Dto dto){2}", tab2, enityClassName, LineEnding);
             sb.AppendLine(tab2 + "{");
-            sb.AppendLine(string.Format("{0}var entity = new {1}();", tab3, enityClassName));
+            sb.AppendFormat("{0}var entity = new {1}();{2}", tab3, enityClassName, LineEnding);
             foreach (var item in properties)
             {
-                sb.AppendLine(string.Format("{0}entity.{1} = dto.{1};", tab3, item.PropertyName));
+                sb.AppendFormat("{0}entity.{1} = dto.{1};{2}", tab3, item.PropertyName, LineEnding);
             }
-            sb.AppendLine(string.Format("{0}return entity;", tab3, enityClassName));
+            sb.AppendLine();
+            sb.AppendLine(tab3 + "ConvertToEntityPartial(ref entity, dto);");
+            sb.AppendLine();
+            sb.AppendLine(tab3 + "return entity;");
             sb.AppendLine(tab2 + "}");
             sb.AppendLine(tab + "}");
             sb.AppendLine("}");
