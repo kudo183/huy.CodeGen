@@ -56,23 +56,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="GenView.xaml">
+    <Page Include="View\GenView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="GenViewModel.xaml">
+    <Page Include="View\GenViewModel.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="GenController.xaml">
+    <Page Include="View\GenController.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="GenDto.xaml">
+    <Page Include="View\GenDto.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="GenTextManager.xaml">
+    <Page Include="View\GenTextManager.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -87,26 +87,26 @@
     <Compile Include="CodeGenerator.cs" />
     <Compile Include="DatabaseUtils.cs" />
     <Compile Include="EntityProperty.cs" />
-    <Compile Include="GenView.xaml.cs">
+    <Compile Include="View\GenView.xaml.cs">
       <DependentUpon>GenView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GenViewViewModel.cs" />
-    <Compile Include="GenViewModelViewModel.cs" />
-    <Compile Include="GenViewModel.xaml.cs">
+    <Compile Include="ViewModel\GenViewViewModel.cs" />
+    <Compile Include="ViewModel\GenViewModelViewModel.cs" />
+    <Compile Include="View\GenViewModel.xaml.cs">
       <DependentUpon>GenViewModel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GenController.xaml.cs">
+    <Compile Include="View\GenController.xaml.cs">
       <DependentUpon>GenController.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GenDto.xaml.cs">
+    <Compile Include="View\GenDto.xaml.cs">
       <DependentUpon>GenDto.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GenControllerViewModel.cs" />
-    <Compile Include="GenDtoViewModel.cs" />
-    <Compile Include="GenTextManager.xaml.cs">
+    <Compile Include="ViewModel\GenControllerViewModel.cs" />
+    <Compile Include="ViewModel\GenDtoViewModel.cs" />
+    <Compile Include="View\GenTextManager.xaml.cs">
       <DependentUpon>GenTextManager.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GenTextManagerViewModel.cs" />
+    <Compile Include="ViewModel\GenTextManagerViewModel.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
