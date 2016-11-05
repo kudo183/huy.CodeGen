@@ -56,6 +56,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="View\DatabaseTree.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\GenAll.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\GenView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -87,6 +95,14 @@
     <Compile Include="CodeGenerator.cs" />
     <Compile Include="DatabaseUtils.cs" />
     <Compile Include="EntityProperty.cs" />
+    <Compile Include="ViewModel\DatabaseTreeVM.cs" />
+    <Compile Include="ViewModel\GenAllVM.cs" />
+    <Compile Include="View\DatabaseTree.xaml.cs">
+      <DependentUpon>DatabaseTree.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\GenAll.xaml.cs">
+      <DependentUpon>GenAll.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\GenView.xaml.cs">
       <DependentUpon>GenView.xaml</DependentUpon>
     </Compile>

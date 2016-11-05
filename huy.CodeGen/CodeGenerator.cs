@@ -370,7 +370,7 @@ namespace huy.CodeGen
             return sb.ToString();
         }
 
-        public static string GenViewClass(string nameSpace, string entityClassName, List<EntityProperty> properties)
+        public static string GenViewXamlClass(string nameSpace, string entityClassName, List<EntityProperty> properties)
         {
             var sb = new StringBuilder();
             var dtoClassName = entityClassName + "Dto";
@@ -414,6 +414,28 @@ namespace huy.CodeGen
             sb.AppendLine(tab2 + "</SimpleDataGrid:EditableGridView.Columns>");
             sb.AppendLine(tab + "</SimpleDataGrid:EditableGridView>");
             sb.AppendLine("</Abstraction:BaseView>");
+            return sb.ToString();
+        }
+
+        public static string GenViewCodeClass(string nameSpace, string entityClassName)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("using Client.Abstraction;");
+            sb.AppendLine("namespace " + nameSpace);
+            sb.AppendLine("{");
+            sb.AppendLine(string.Format("    public partial class {0}View : BaseView<DTO.{0}Dto>", entityClassName));
+            sb.AppendLine("    {");
+            sb.AppendLine(string.Format("        partial void InitUIPartial();"));
+            sb.AppendLine();
+            sb.AppendLine(string.Format("        public {0}View() : base()", entityClassName));
+            sb.AppendLine("        {");
+            sb.AppendLine("            InitializeComponent();");
+            sb.AppendLine();
+            sb.AppendLine("            InitUIPartial();");
+            sb.AppendLine("        }");
+            sb.AppendLine("    }");
+            sb.AppendLine("}");
+
             return sb.ToString();
         }
 

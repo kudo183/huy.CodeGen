@@ -68,7 +68,7 @@ namespace huy.CodeGen
                 propertiesList.Add(property);
             }
 
-            vm.Result = CodeGenerator.GenViewClass(vm.Namespace, vm.EnityClassName, propertiesList);
+            vm.Result = CodeGenerator.GenViewXamlClass(vm.Namespace, vm.EnityClassName, propertiesList);
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -81,27 +81,13 @@ namespace huy.CodeGen
                     continue;
 
                 var properties = DatabaseUtils.ListColumnsOfTable(vm.DatabaseName, table);
-                var dtoClass = CodeGenerator.GenViewClass(vm.Namespace, table, properties);
                 var path = vm.OutputPath + "\\" + table + "View.xaml";
-                System.IO.File.WriteAllText(path, dtoClass, Encoding.UTF8);
 
-                var sb = new StringBuilder();
-                sb.AppendLine("using Client.Abstraction;");
-                sb.AppendLine("namespace " + vm.Namespace);
-                sb.AppendLine("{");
-                sb.AppendLine(string.Format("    public partial class {0}View : BaseView<DTO.{0}Dto>", table));
-                sb.AppendLine("    {");
-                sb.AppendLine(string.Format("        partial void InitUIPartial();"));
-                sb.AppendLine();
-                sb.AppendLine(string.Format("        public {0}View() : base()", table));
-                sb.AppendLine("        {");
-                sb.AppendLine("            InitializeComponent();");
-                sb.AppendLine();
-                sb.AppendLine("            InitUIPartial();");
-                sb.AppendLine("        }");
-                sb.AppendLine("    }");
-                sb.AppendLine("}");
-                System.IO.File.WriteAllText(path + ".cs", sb.ToString(), Encoding.UTF8);
+                var xamlClass = CodeGenerator.GenViewXamlClass(vm.Namespace, table, properties);
+                System.IO.File.WriteAllText(path, xamlClass, Encoding.UTF8);
+
+                var codeClass = CodeGenerator.GenViewCodeClass(vm.Namespace, table);
+                System.IO.File.WriteAllText(path + ".cs", codeClass, Encoding.UTF8);
             }
         }
     }

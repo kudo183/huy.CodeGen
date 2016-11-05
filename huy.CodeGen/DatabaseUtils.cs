@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
+﻿using huy.CodeGen.ViewModel;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 
 namespace huy.CodeGen
@@ -11,11 +11,14 @@ namespace huy.CodeGen
         private static Dictionary<string, string> _typeMapping = new Dictionary<string, string>()
         {
             {"int", "int" },
+            {"bigint", "long" },
             {"bit","bool" },
             {"date","System.DateTime" },
+            {"datetime","System.DateTime" },
             {"datetime2","System.DateTime" },
             {"time","System.TimeSpan" },
-            {"nvarchar", "string" }
+            {"nvarchar", "string" },
+            {"varbinary", "byte[]" }
         };
 
         public static List<string> ListTables(string dbName)
@@ -67,6 +70,54 @@ namespace huy.CodeGen
             return result;
         }
 
+        public static List<DbTable> FromDB(string dbName)
+        {
+            var tables = new List<DbTable>();
+
+            var server = new Microsoft.SqlServer.Management.Smo.Server(serverName);
+            var db = new Microsoft.SqlServer.Management.Smo.Database(server, dbName);
+            db.Refresh();
+            foreach (Microsoft.SqlServer.Management.Smo.Table table in db.Tables)
+            {
+                table.Refresh();
+                var dic = new Dictionary<string, string>();
+                foreach (Microsoft.SqlServer.Management.Smo.ForeignKey item in table.ForeignKeys)
+                {
+                    dic.Add(item.Columns[0].Name, item.ReferencedTable);
+                }
+
+                var columns = new List<DbTableColumn>();
+
+                foreach (Microsoft.SqlServer.Management.Smo.Column item in table.Columns)
+                {
+                    var propertyType = _typeMapping[item.DataType.Name];
+                    if (item.Nullable == true && propertyType != "string")
+                        propertyType = propertyType + "?";
+
+                    var entityProperty = new DbTableColumn()
+                    {
+                        DataType = propertyType,
+                        ColumnName = item.Name,
+                        IsForeignKey = item.IsForeignKey,
+                        IsPrimaryKey=item.InPrimaryKey,
+                        IsIdentity = item.Identity
+                    };
+                    if (item.IsForeignKey == true)
+                    {
+                        entityProperty.ForeignKeyTableName = dic[item.Name];
+                    }
+                    columns.Add(entityProperty);
+                }
+
+                tables.Add(new DbTable()
+                {
+                    TableName = table.Name,
+                    Columns = new ObservableCollection<DbTableColumn>(columns)
+                });
+            }
+            return tables;
+        }
+
         public static string ConcatString(List<string> input)
         {
             var sb = new StringBuilder();
@@ -79,6 +130,9 @@ namespace huy.CodeGen
 
         public static string UpperFirstLetter(string text)
         {
+            if (string.IsNullOrEmpty(text) == true)
+                return text;
+
             return text[0].ToString().ToUpper() + text.Substring(1);
         }
     }
