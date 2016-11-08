@@ -19,6 +19,7 @@ namespace huy.CodeGen.ViewModel
         public string TextPath { get; set; }
         public string ControllerPath { get; set; }
         public string DtoPath { get; set; }
+        public string EntityPath { get; set; }
 
         public IEnumerable<CultureInfo> LanguageNameList { get; set; }
 

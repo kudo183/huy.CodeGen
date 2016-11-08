@@ -67,9 +67,14 @@
                     <TextBox Text="{Binding DtoPath, UpdateSourceTrigger=PropertyChanged}" Width="400"/>
                     <Button Content="Open" Tag="Dto" Click="OpenButton_Click"/>
                 </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="5">
+                    <TextBlock Width="120" Text="Entity Path: "/>
+                    <TextBox Text="{Binding EntityPath, UpdateSourceTrigger=PropertyChanged}" Width="400"/>
+                    <Button Content="Open" Tag="Entity" Click="OpenButton_Click"/>
+                </StackPanel>
                 <Button Grid.Row="1" Content="Generate" Width="200" Height="50" HorizontalAlignment="Left" Margin="200 20 0 0" Click="GenerateButton_Click"/>
             </StackPanel>
-            <ListBox Grid.Row="1" ItemsSource="{Binding Messages}"/>
+            <ListBox Grid.Row="1" ItemsSource="{Binding Messages}" ScrollViewer.VerticalScrollBarVisibility="Visible"/>
         </Grid>
         <GridSplitter Width="5" VerticalAlignment="Stretch" HorizontalAlignment="Right"/>
     </Grid>

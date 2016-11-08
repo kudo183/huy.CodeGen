@@ -439,6 +439,165 @@ namespace huy.CodeGen
             return sb.ToString();
         }
 
+        public static string GenDbContextClass(string nameSpace, string contextName, IEnumerable<ViewModel.DbTable> tables)
+        {
+            var sb = new StringBuilder();
+            var tab = "    ";
+            var tab2 = tab + tab;
+            var tab3 = tab2 + tab;
+            var tab4 = tab3 + tab;
+            var tab5 = tab4 + tab;
+
+            sb.AppendLine("using System;");
+            sb.AppendLine("using Microsoft.EntityFrameworkCore;");
+            sb.AppendLine("using Microsoft.EntityFrameworkCore.Metadata;");
+            sb.AppendLine("using huypq.SwaMiddleware;");
+            sb.AppendLine();
+            sb.AppendLine("namespace " + nameSpace);
+            sb.AppendLine("{");
+            sb.AppendFormat("{0}public partial class {1} : DbContext, SwaIDbContext<User>{2}", tab, contextName, LineEnding);
+            sb.AppendLine(tab + "{");
+            sb.AppendFormat("{0}public {1}(DbContextOptions<{1}> options) : base(options){2}", tab2, contextName, LineEnding);
+            sb.AppendLine(tab2 + "{");
+            sb.AppendLine(tab3 + "ChangeTracker.AutoDetectChangesEnabled = false;");
+            sb.AppendLine(tab3 + "ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;");
+            sb.AppendLine(tab2 + "}");
+            sb.AppendLine();
+            sb.AppendLine(tab2 + "protected override void OnModelCreating(ModelBuilder modelBuilder)");
+            sb.AppendLine(tab2 + "{");
+            foreach (var table in tables)
+            {
+                var UpperedTableName = DatabaseUtils.UpperFirstLetter(table.TableName);
+                sb.AppendFormat("{0}modelBuilder.Entity<{1}>(entity =>{2}", tab3, UpperedTableName, LineEnding);
+                sb.AppendLine(tab3 + "{");
+                foreach (var index in table.Indexes)
+                {
+                    switch (index.IndexType)
+                    {
+                        case 0:
+                            sb.AppendFormat("{0}entity.HasIndex(e => e.{1}){2}", tab4, index.PropertyName, LineEnding);
+                            sb.AppendFormat("{0}.HasName(\"{1}\");{2}", tab5, index.IX_Name, LineEnding);
+                            break;
+                        case 1:
+                            sb.AppendFormat("{0}entity.HasKey(e => e.{1}){2}", tab4, index.PropertyName, LineEnding);
+                            sb.AppendFormat("{0}.HasName(\"{1}\");{2}", tab5, index.IX_Name, LineEnding);
+                            if (table.TableName != UpperedTableName)
+                            {
+                                sb.AppendLine();
+                                sb.AppendFormat("{0}entity.ToTable(\"{1}\");{2}", tab4, table.TableName, LineEnding);
+                            }
+                            break;
+                        case 2:
+                            sb.AppendFormat("{0}entity.HasIndex(e => e.{1}){2}", tab4, index.PropertyName, LineEnding);
+                            sb.AppendFormat("{0}.HasName(\"{1}\"){2}", tab5, index.IX_Name, LineEnding);
+                            sb.AppendLine(tab5 + ".IsUnique();");
+                            break;
+                    }
+                    sb.AppendLine();
+                }
+                foreach (var defaultValue in table.DefaultValues)
+                {
+                    var value = defaultValue.Value.Substring(2, defaultValue.Value.Length - 4);
+                    if (string.IsNullOrEmpty(value) == true)
+                    {
+                        value = "''";
+                    }
+                    sb.AppendFormat("{0}entity.Property(e => e.{1}).HasDefaultValueSql(\"{2}\");{3}", tab4, defaultValue.PropertyName, value, LineEnding);
+                    sb.AppendLine();
+                }
+                foreach (var hasColumnType in table.HasColumnTypes)
+                {
+                    sb.AppendFormat("{0}entity.Property(e => e.{1}).HasColumnType(\"{2}\");{3}", tab4, hasColumnType.PropertyName, hasColumnType.TypeName, LineEnding);
+                }
+                foreach (var requiredMaxLength in table.RequiredMaxLengths)
+                {
+                    sb.AppendFormat("{0}entity.Property(e => e.{1})", tab4, requiredMaxLength.PropertyName);
+                    if (requiredMaxLength.NeedIsRequired == true)
+                    {
+                        sb.AppendLine();
+                        sb.Append(tab5 + ".IsRequired()");
+                    }
+                    if (requiredMaxLength.MaxLength > 0)
+                    {
+                        sb.AppendLine();
+                        sb.AppendFormat("{0}.HasMaxLength({1})", tab5, requiredMaxLength.MaxLength);
+                    }
+                    sb.AppendLine(";");
+                }
+                sb.AppendLine();
+                foreach (var foreignKey in table.ForeignKeys)
+                {
+                    sb.AppendFormat("{0}entity.HasOne(d => d.{1}Navigation){2}", tab4, foreignKey.PropertyName, LineEnding);
+                    sb.AppendFormat("{0}.WithMany(p => p.{1}{2}Navigation){3}", tab5, UpperedTableName, foreignKey.PropertyName, LineEnding);
+                    sb.AppendFormat("{0}.HasForeignKey(d => d.{1}){2}", tab5, foreignKey.PropertyName, LineEnding);
+                    if (foreignKey.DeleteAction == 0)
+                    {
+                        sb.AppendLine(tab5 + ".OnDelete(DeleteBehavior.Restrict)");
+                    }
+                    else if (foreignKey.DeleteAction == 1)
+                    {
+                        sb.AppendLine(tab5 + ".OnDelete(DeleteBehavior.SetNull)");
+                    }
+                    else if (foreignKey.DeleteAction == 2)
+                    {
+                        sb.AppendLine(tab5 + ".OnDelete(DeleteBehavior.Cascade)");
+                    }
+                    sb.AppendFormat("{0}.HasConstraintName(\"{1}\");{2}", tab5, foreignKey.FK_Name, LineEnding);
+                    sb.AppendLine();
+                }
+                sb.AppendLine(tab3 + "});");
+            }
+            sb.AppendLine(tab2 + "}");
+            foreach (var table in tables)
+            {
+                sb.AppendFormat("{0}public DbSet<{1}> {1} {{ get; set; }}{2}",
+                    tab2, DatabaseUtils.UpperFirstLetter(table.TableName), LineEnding);
+            }
+            sb.AppendLine(tab + "}");
+            sb.AppendLine("}");
+            return sb.ToString();
+        }
+
+        public static string GenEntityClass(string nameSpace, string entityClassName, IEnumerable<EntityProperty> properties, IEnumerable<ViewModel.Reference> references)
+        {
+            var sb = new StringBuilder();
+            var tab = "    ";
+            var tab2 = tab + tab;
+            var tab3 = tab2 + tab;
+            sb.AppendLine("using System;");
+            sb.AppendLine("using System.Collections.Generic;");
+            sb.AppendLine();
+            sb.AppendLine("namespace " + nameSpace);
+            sb.AppendLine("{");
+            sb.AppendFormat("{0}public partial class {1} : huypq.SwaMiddleware.SwaIEntity{2}", tab, entityClassName, LineEnding);
+            sb.AppendLine(tab + "{");
+            sb.AppendFormat("{0}public {1}(){2}", tab2, entityClassName, LineEnding);
+            sb.AppendLine(tab2 + "{");
+            foreach (var item in references)
+            {
+                sb.AppendFormat("{0}{1}Navigation = new HashSet<{2}>();{3}", tab3, DatabaseUtils.UpperFirstLetter(item.PropertyName), DatabaseUtils.UpperFirstLetter(item.ReferenceTableName), LineEnding);
+            }
+            sb.AppendLine(tab2 + "}");
+            sb.AppendLine();
+            foreach (var item in properties)
+            {
+                sb.AppendFormat("{0}public {1} {2} {{ get; set; }}{3}", tab2, item.PropertyType, item.PropertyName, LineEnding);
+            }
+            sb.AppendLine();
+            foreach (var item in references)
+            {
+                sb.AppendFormat("{0}public ICollection<{1}> {2}Navigation {{ get; set; }}{3}", tab2, DatabaseUtils.UpperFirstLetter(item.ReferenceTableName), DatabaseUtils.UpperFirstLetter(item.PropertyName), LineEnding);
+            }
+            sb.AppendLine();
+            foreach (var item in properties.Where(p => p.IsForeignKey == true))
+            {
+                sb.AppendFormat("{0}public {1} {2}Navigation {{ get; set; }}{3}", tab2, DatabaseUtils.UpperFirstLetter(item.ForeignKeyTableName), item.PropertyName, LineEnding);
+            }
+            sb.AppendLine(tab + "}");
+            sb.AppendLine("}");
+            return sb.ToString();
+        }
+
         private static string GenProperty(string tab, string propertyType, string propertyName)
         {
             return string.Format("{0}public {1} {2} {{ get {{ return _{2}; }} set {{ _{2} = value; OnPropertyChanged(); }} }}",

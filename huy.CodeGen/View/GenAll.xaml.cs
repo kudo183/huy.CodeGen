@@ -27,7 +27,7 @@ namespace huy.CodeGen.View
             InitializeComponent();
 
             vm = new ViewModel.GenAllVM();
-            vm.DatabaseTreeVM.DBName = "PhuDinhClientServer";
+            vm.DatabaseTreeVM.DBName = "PhuDinh_test";// "PhuDinhClientServer";
             vm.ClientNamespace = "Client";
             vm.ServerNamespace = "Server";
             vm.DtoNamespace = "DTO";
@@ -38,6 +38,7 @@ namespace huy.CodeGen.View
             vm.TextPath = @"D:\GitHub\PhuDinhClientServer\Client\Client\Text";
             vm.ControllerPath = @"D:\GitHub\PhuDinhClientServer\Server\src\Server\Controllers\Gen";
             vm.DtoPath = @"D:\GitHub\PhuDinhClientServer\Shared\DTO\Gen";
+            vm.EntityPath = @"D:\GitHub\PhuDinhClientServer\Server\src\Server\Entities\Gen";
             DataContext = vm;
         }
 
@@ -55,6 +56,8 @@ namespace huy.CodeGen.View
             GenController();
             vm.Messages.Add(string.Format("{0} | Generating Dto ...", DateTime.Now));
             GenDto();
+            vm.Messages.Add(string.Format("{0} | Generating Entity ...", DateTime.Now));
+            GenEntity();
             vm.Messages.Add(string.Format("{0} | Done.", DateTime.Now));
         }
 
@@ -80,6 +83,9 @@ namespace huy.CodeGen.View
                     break;
                 case "Dto":
                     OpenPath(vm.DtoPath);
+                    break;
+                case "Entity":
+                    OpenPath(vm.EntityPath);
                     break;
             }
         }
@@ -183,6 +189,25 @@ namespace huy.CodeGen.View
                 var path = vm.DtoPath + "\\" + entityClassName + "Dto.cs";
                 System.IO.File.WriteAllText(path, dtoClass, Encoding.UTF8);
             }
+        }
+
+        private void GenEntity()
+        {
+            var nameSpace = vm.ServerNamespace + ".Entities";
+            foreach (var table in vm.DatabaseTreeVM.DbTables.Where(p => p.IsSelected == true))
+            {
+                var entityClassName = DatabaseUtils.UpperFirstLetter(table.TableName);
+                var properties = table.Columns.Select(p => p.ToEntityProperty())
+                   .OrderBy(p => p.PropertyName).ToList();
+
+                var dtoClass = CodeGenerator.GenEntityClass(nameSpace, entityClassName, properties, table.ReferencesToThisTable);
+                var path = vm.EntityPath + "\\" + entityClassName + ".cs";
+                System.IO.File.WriteAllText(path, dtoClass, Encoding.UTF8);
+            }
+
+            var contextClass = CodeGenerator.GenDbContextClass(nameSpace, vm.DbContextName, vm.DatabaseTreeVM.DbTables.Where(p => p.IsSelected == true));
+            var contextClassPath = vm.EntityPath + "\\" + vm.DbContextName + ".cs";
+            System.IO.File.WriteAllText(contextClassPath, contextClass, Encoding.UTF8);
         }
     }
 }
