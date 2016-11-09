@@ -168,7 +168,7 @@ namespace huy.CodeGen
                     if (string.IsNullOrEmpty(line) == true)
                         break;
 
-                    var texts = line.Split(new[] { "\t\t" }, StringSplitOptions.RemoveEmptyEntries);
+                    var texts = line.Split(new[] { "\t\t" }, StringSplitOptions.None);
                     data.Add(new GenTextManagerViewModel.TextData()
                     {
                         TextKey = texts[0],
