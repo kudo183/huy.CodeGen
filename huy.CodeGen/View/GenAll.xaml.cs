@@ -116,7 +116,7 @@ namespace huy.CodeGen.View
                 var entityClassName = DatabaseUtils.UpperFirstLetter(table.TableName);
                 var path = vm.ViewPath + "\\" + entityClassName + "View.xaml";
 
-                var properties = table.Columns.Select(p => p.ToEntityProperty())
+                var properties = table.Columns.Where(p => p.ColumnName != "GroupID").Select(p => p.ToEntityProperty())
                     .OrderBy(p => p.PropertyName).ToList();
 
                 var xamlClass = CodeGenerator.GenViewXamlClass(viewNamespace, entityClassName, properties);
@@ -135,7 +135,7 @@ namespace huy.CodeGen.View
             foreach (var table in vm.DatabaseTreeVM.DbTables.Where(p => p.IsSelected == true))
             {
                 var entityClassName = DatabaseUtils.UpperFirstLetter(table.TableName);
-                var properties = table.Columns.Select(p => p.ToEntityProperty())
+                var properties = table.Columns.Where(p => p.ColumnName != "GroupID").Select(p => p.ToEntityProperty())
                    .OrderBy(p => p.PropertyName).ToList();
 
                 var viewModelClass = CodeGenerator.GenViewModelClass(viewNamespace, entityClassName, properties);
@@ -155,6 +155,9 @@ namespace huy.CodeGen.View
                 var entityClassName = DatabaseUtils.UpperFirstLetter(table.TableName);
                 foreach (var column in table.Columns)
                 {
+                    if (column.ColumnName == "GroupID")
+                        continue;
+
                     textData.Add(new GenTextManagerViewModel.TextData()
                     {
                         TextKey = string.Format("{0}_{1}", entityClassName, column.ColumnName),
@@ -183,7 +186,7 @@ namespace huy.CodeGen.View
             vm.Messages.Add(string.Format("{0} | Generating Controller ...", DateTime.Now));
 
             var viewNamespace = vm.ServerNamespace + ".Controllers";
-            foreach (var table in vm.DatabaseTreeVM.DbTables.Where(p => p.IsSelected == true))
+            foreach (var table in vm.DatabaseTreeVM.DbTables.Where(p => p.IsSelected == true && p.TableName.StartsWith("Swa") == false))
             {
                 var entityClassName = DatabaseUtils.UpperFirstLetter(table.TableName);
                 var properties = table.Columns.Select(p => p.ToEntityProperty())

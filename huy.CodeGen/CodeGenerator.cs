@@ -303,7 +303,7 @@ namespace huy.CodeGen
                     sb.AppendFormat("{0}nameof({1}.{2}),{3}", tab4, dtoClassName, item.PropertyName, LineEnding);
                     sb.AppendFormat("{0}typeof({1}),{2}", tab4, item.PropertyType, LineEnding);
                     sb.AppendFormat("{0}nameof({1}Dto.TenHienThi),{2}", tab4, item.ForeignKeyTableName, LineEnding);
-                    sb.AppendFormat("{0}nameof({1}Dto.Ma)){2}", tab4, item.ForeignKeyTableName, LineEnding);
+                    sb.AppendFormat("{0}nameof({1}Dto.ID)){2}", tab4, item.ForeignKeyTableName, LineEnding);
                     sb.AppendLine(tab3 + "{");
                     sb.AppendFormat("{0}AddCommand = new SimpleCommand(\"{1}AddCommand\",{2}", tab4, item.PropertyName, LineEnding);
                     sb.AppendLine(tab5 + "() => base.ProccessHeaderAddCommand(");
@@ -393,9 +393,6 @@ namespace huy.CodeGen
             sb.AppendLine(tab2 + "<SimpleDataGrid:EditableGridView.Columns>");
             foreach (var item in properties)
             {
-                if (item.PropertyName == "GroupID")
-                    continue;
-
                 if (item.IsIdentity == true)
                 {
                     sb.AppendFormat("{0}<SimpleDataGrid:DataGridTextColumnExt Width=\"80\" Header=\"{1}\" IsReadOnly=\"True\" Binding=\"{{Binding {1}, Mode=OneWay}}\"/>{2}", tab3, item.PropertyName, LineEnding);

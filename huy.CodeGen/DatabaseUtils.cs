@@ -106,7 +106,6 @@ namespace huy.CodeGen
                 var indexes = GetIndexes(table);
                 var foreignKeys = GetForeignKey(table);
 
-
                 var columns = new List<DbTableColumn>();
                 var requiredMaxLengths = new List<RequiredMaxLength>();
                 var defaultValues = new List<DefaultValue>();
