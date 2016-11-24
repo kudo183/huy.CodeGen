@@ -17,6 +17,7 @@ namespace huy.CodeGen
             {"datetime","System.DateTime" },
             {"datetime2","System.DateTime" },
             {"time","System.TimeSpan" },
+            {"varchar", "string" },
             {"nvarchar", "string" },
             {"varbinary", "byte[]" },
             {"uniqueidentifier", "System.Guid" }

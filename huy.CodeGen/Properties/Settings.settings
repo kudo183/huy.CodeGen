@@ -1,7 +1,42 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="huy.CodeGen.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="GA_DbName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Test</Value>
+    </Setting>
+    <Setting Name="GA_ClientNamespace" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Client</Value>
+    </Setting>
+    <Setting Name="GA_ServerNamespace" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Server</Value>
+    </Setting>
+    <Setting Name="GA_DtoNamespace" Type="System.String" Scope="User">
+      <Value Profile="(Default)">DTO</Value>
+    </Setting>
+    <Setting Name="GA_DefaultLanguage" Type="System.String" Scope="User">
+      <Value Profile="(Default)">vi-VN</Value>
+    </Setting>
+    <Setting Name="GA_DbContextName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">TestContext</Value>
+    </Setting>
+    <Setting Name="GA_ViewPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\GitHub\PhuDinhClientServer\Client\Client\View\Gen</Value>
+    </Setting>
+    <Setting Name="GA_ViewModelPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\GitHub\PhuDinhClientServer\Client\Client\ViewModel\Gen</Value>
+    </Setting>
+    <Setting Name="GA_TextPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\GitHub\PhuDinhClientServer\Client\Client\Text</Value>
+    </Setting>
+    <Setting Name="GA_ControllerPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\GitHub\PhuDinhClientServer\Server\src\Server\Controllers\Gen</Value>
+    </Setting>
+    <Setting Name="GA_DtoPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\GitHub\PhuDinhClientServer\Shared\DTO\Gen</Value>
+    </Setting>
+    <Setting Name="GA_EntityPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\GitHub\PhuDinhClientServer\Server\src\Server\Entities\Gen</Value>
+    </Setting>
+  </Settings>
 </SettingsFile>

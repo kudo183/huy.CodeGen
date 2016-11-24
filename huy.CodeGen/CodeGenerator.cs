@@ -393,6 +393,9 @@ namespace huy.CodeGen
             sb.AppendLine(tab2 + "<SimpleDataGrid:EditableGridView.Columns>");
             foreach (var item in properties)
             {
+                if (item.PropertyName == "GroupID")
+                    continue;
+
                 if (item.IsIdentity == true)
                 {
                     sb.AppendFormat("{0}<SimpleDataGrid:DataGridTextColumnExt Width=\"80\" Header=\"{1}\" IsReadOnly=\"True\" Binding=\"{{Binding {1}, Mode=OneWay}}\"/>{2}", tab3, item.PropertyName, LineEnding);
@@ -400,7 +403,7 @@ namespace huy.CodeGen
                 else if (item.IsForeignKey == true)
                 {
                     sb.AppendFormat("{0}<SimpleDataGrid:DataGridComboBoxColumnExt Header=\"{1}\"{2}", tab3, item.PropertyName, LineEnding);
-                    sb.AppendLine(tab4 + "SelectedValuePath=\"Ma\"");
+                    sb.AppendLine(tab4 + "SelectedValuePath=\"ID\"");
                     sb.AppendLine(tab4 + "DisplayMemberPath=\"TenHienThi\"");
                     sb.AppendFormat("{0}SelectedValueBinding=\"{{Binding {1}, UpdateSourceTrigger=PropertyChanged}}\"{2}", tab4, item.PropertyName, LineEnding);
                     sb.AppendFormat("{0}ItemsSource=\"{{Binding {1}Sources}}\"/>{2}", tab4, item.PropertyName, LineEnding);
@@ -455,7 +458,7 @@ namespace huy.CodeGen
             sb.AppendLine();
             sb.AppendLine("namespace " + nameSpace);
             sb.AppendLine("{");
-            sb.AppendFormat("{0}public partial class {1} : DbContext, SwaIDbContext<User>{2}", tab, contextName, LineEnding);
+            sb.AppendFormat("{0}public partial class {1} : DbContext, SwaIDbContext<SwaUser, SwaGroup, SwaUserGroup>{2}", tab, contextName, LineEnding);
             sb.AppendLine(tab + "{");
             sb.AppendFormat("{0}public {1}(DbContextOptions<{1}> options) : base(options){2}", tab2, contextName, LineEnding);
             sb.AppendLine(tab2 + "{");
@@ -497,7 +500,7 @@ namespace huy.CodeGen
                 }
                 foreach (var defaultValue in table.DefaultValues)
                 {
-                    var value = defaultValue.Value.Substring(2, defaultValue.Value.Length - 4);
+                    var value = defaultValue.Value.Substring(1, defaultValue.Value.Length - 2);
                     if (string.IsNullOrEmpty(value) == true)
                     {
                         value = "''";
@@ -569,7 +572,20 @@ namespace huy.CodeGen
             sb.AppendLine();
             sb.AppendLine("namespace " + nameSpace);
             sb.AppendLine("{");
-            sb.AppendFormat("{0}public partial class {1} : huypq.SwaMiddleware.SwaIEntity{2}", tab, entityClassName, LineEnding);
+            var interfaceName = "SwaIEntity";
+            if (entityClassName == "SwaUser")
+            {
+                interfaceName = "SwaIUser";
+            }
+            else if (entityClassName == "SwaGroup")
+            {
+                interfaceName = "SwaIGroup";
+            }
+            else if (entityClassName == "SwaUserGroup")
+            {
+                interfaceName = "SwaIUserGroup";
+            }
+            sb.AppendFormat("{0}public partial class {1} : huypq.SwaMiddleware.{2}{3}", tab, entityClassName, interfaceName, LineEnding);
             sb.AppendLine(tab + "{");
             sb.AppendFormat("{0}public {1}(){2}", tab2, entityClassName, LineEnding);
             sb.AppendLine(tab2 + "{");

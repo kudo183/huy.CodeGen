@@ -20,47 +20,58 @@ namespace huy.CodeGen.View
     /// </summary>
     public partial class GenAll : UserControl
     {
-        ViewModel.GenAllVM vm;
+        ViewModel.GenAllVM vm = ViewModelManager.Instance.GenAllVM;
 
         public GenAll()
         {
             InitializeComponent();
 
-            vm = new ViewModel.GenAllVM();
-            vm.DatabaseTreeVM.DBName = "PhuDinh_test";// "PhuDinhClientServer";
-            vm.ClientNamespace = "Client";
-            vm.ServerNamespace = "Server";
-            vm.DtoNamespace = "DTO";
-            vm.DefaultLanguage = "vi-VN";
-            vm.DbContextName = "PhuDinhServerContext";
-            vm.ViewPath = @"D:\GitHub\PhuDinhClientServer\Client\Client\View\Gen";
-            vm.ViewModelPath = @"D:\GitHub\PhuDinhClientServer\Client\Client\ViewModel\Gen";
-            vm.TextPath = @"D:\GitHub\PhuDinhClientServer\Client\Client\Text";
-            vm.ControllerPath = @"D:\GitHub\PhuDinhClientServer\Server\src\Server\Controllers\Gen";
-            vm.DtoPath = @"D:\GitHub\PhuDinhClientServer\Shared\DTO\Gen";
-            vm.EntityPath = @"D:\GitHub\PhuDinhClientServer\Server\src\Server\Entities\Gen";
             DataContext = vm;
         }
 
         private void GenerateButton_Click(object sender, RoutedEventArgs e)
         {
-            vm.Messages.Clear();
+            var btn = sender as Button;
+            if (btn == null)
+                return;
 
-            vm.Messages.Add(string.Format("{0} | Generating View ...", DateTime.Now));
-            GenView();
-            vm.Messages.Add(string.Format("{0} | Generating ViewModel ...", DateTime.Now));
-            GenViewModel();
-            vm.Messages.Add(string.Format("{0} | Generating Text ...", DateTime.Now));
-            GenText();
-            vm.Messages.Add(string.Format("{0} | Generating Controller ...", DateTime.Now));
-            GenController();
-            vm.Messages.Add(string.Format("{0} | Generating Dto ...", DateTime.Now));
-            GenDto();
-            vm.Messages.Add(string.Format("{0} | Generating Entity ...", DateTime.Now));
-            GenEntity();
+            switch (btn.Tag.ToString())
+            {
+                case "View":
+                    GenView();
+                    break;
+                case "ViewModel":
+                    GenViewModel();
+                    break;
+                case "Text":
+                    GenText();
+                    break;
+                case "Controller":
+                    GenController();
+                    break;
+                case "Dto":
+                    GenDto();
+                    break;
+                case "Entity":
+                    GenEntity();
+                    break;
+                case "All":
+                    GenAllCode();
+                    break;
+            }
+
             vm.Messages.Add(string.Format("{0} | Done.", DateTime.Now));
         }
 
+        private void GenAllCode()
+        {
+            GenView();
+            GenViewModel();
+            GenText();
+            GenController();
+            GenDto();
+            GenEntity();
+        }
         private void OpenButton_Click(object sender, RoutedEventArgs e)
         {
             var btn = sender as Button;
@@ -97,6 +108,8 @@ namespace huy.CodeGen.View
 
         private void GenView()
         {
+            vm.Messages.Add(string.Format("{0} | Generating View ...", DateTime.Now));
+
             var viewNamespace = vm.ClientNamespace + ".View";
             foreach (var table in vm.DatabaseTreeVM.DbTables.Where(p => p.IsSelected == true))
             {
@@ -116,6 +129,8 @@ namespace huy.CodeGen.View
 
         private void GenViewModel()
         {
+            vm.Messages.Add(string.Format("{0} | Generating ViewModel ...", DateTime.Now));
+
             var viewNamespace = vm.ClientNamespace + ".ViewModel";
             foreach (var table in vm.DatabaseTreeVM.DbTables.Where(p => p.IsSelected == true))
             {
@@ -131,6 +146,8 @@ namespace huy.CodeGen.View
 
         private void GenText()
         {
+            vm.Messages.Add(string.Format("{0} | Generating Text ...", DateTime.Now));
+
             var defaultLanguage = vm.DefaultLanguage.ToLower();
             var textData = new List<GenTextManagerViewModel.TextData>();
             foreach (var table in vm.DatabaseTreeVM.DbTables.Where(p => p.IsSelected == true))
@@ -163,6 +180,8 @@ namespace huy.CodeGen.View
 
         private void GenController()
         {
+            vm.Messages.Add(string.Format("{0} | Generating Controller ...", DateTime.Now));
+
             var viewNamespace = vm.ServerNamespace + ".Controllers";
             foreach (var table in vm.DatabaseTreeVM.DbTables.Where(p => p.IsSelected == true))
             {
@@ -178,6 +197,8 @@ namespace huy.CodeGen.View
 
         private void GenDto()
         {
+            vm.Messages.Add(string.Format("{0} | Generating Dto ...", DateTime.Now));
+
             var viewNamespace = vm.DtoNamespace;
             foreach (var table in vm.DatabaseTreeVM.DbTables.Where(p => p.IsSelected == true))
             {
@@ -193,6 +214,8 @@ namespace huy.CodeGen.View
 
         private void GenEntity()
         {
+            vm.Messages.Add(string.Format("{0} | Generating Entity ...", DateTime.Now));
+
             var nameSpace = vm.ServerNamespace + ".Entities";
             foreach (var table in vm.DatabaseTreeVM.DbTables.Where(p => p.IsSelected == true))
             {
