@@ -28,7 +28,7 @@ namespace huy.CodeGen.ViewModel
         public GenAllVM()
         {
             DatabaseTreeVM = new DatabaseTreeVM();
-            LanguageNameList = CultureInfo.GetCultures(CultureTypes.AllCultures).OrderBy(p => p.DisplayName);
+            LanguageNameList = CultureInfo.GetCultures(CultureTypes.AllCultures).OrderBy(p => p.DisplayName, System.StringComparer.OrdinalIgnoreCase);
             Messages = new ObservableCollection<string>();
         }
     }

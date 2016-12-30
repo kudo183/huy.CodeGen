@@ -117,7 +117,7 @@ namespace huy.CodeGen.View
                 var path = vm.ViewPath + "\\" + entityClassName + "View.xaml";
 
                 var properties = table.Columns.Where(p => p.ColumnName != "GroupID").Select(p => p.ToEntityProperty())
-                    .OrderBy(p => p.PropertyName).ToList();
+                    .OrderBy(p => p.PropertyName, StringComparer.OrdinalIgnoreCase).ToList();
 
                 var xamlClass = CodeGenerator.GenViewXamlClass(viewNamespace, entityClassName, properties);
                 System.IO.File.WriteAllText(path, xamlClass, Encoding.UTF8);
@@ -136,7 +136,7 @@ namespace huy.CodeGen.View
             {
                 var entityClassName = DatabaseUtils.UpperFirstLetter(table.TableName);
                 var properties = table.Columns.Where(p => p.ColumnName != "GroupID").Select(p => p.ToEntityProperty())
-                   .OrderBy(p => p.PropertyName).ToList();
+                   .OrderBy(p => p.PropertyName, StringComparer.OrdinalIgnoreCase).ToList();
 
                 var viewModelClass = CodeGenerator.GenViewModelClass(viewNamespace, entityClassName, properties);
                 var path = vm.ViewModelPath + "\\" + entityClassName + "ViewModel.cs";
@@ -190,7 +190,7 @@ namespace huy.CodeGen.View
             {
                 var entityClassName = DatabaseUtils.UpperFirstLetter(table.TableName);
                 var properties = table.Columns.Select(p => p.ToEntityProperty())
-                   .OrderBy(p => p.PropertyName).ToList();
+                   .OrderBy(p => p.PropertyName, StringComparer.OrdinalIgnoreCase).ToList();
 
                 var controllerClass = CodeGenerator.GenControllerClass(viewNamespace, entityClassName, vm.DbContextName, properties);
                 var path = vm.ControllerPath + "\\" + entityClassName + "Controller.cs";
@@ -207,7 +207,7 @@ namespace huy.CodeGen.View
             {
                 var entityClassName = DatabaseUtils.UpperFirstLetter(table.TableName);
                 var properties = table.Columns.Select(p => p.ToEntityProperty())
-                   .OrderBy(p => p.PropertyName).ToList();
+                   .OrderBy(p => p.PropertyName, StringComparer.OrdinalIgnoreCase).ToList();
 
                 var dtoClass = CodeGenerator.GenDtoClassImplementINotifyPropertyChanged(viewNamespace, "IDto", entityClassName + "Dto", properties);
                 var path = vm.DtoPath + "\\" + entityClassName + "Dto.cs";
@@ -224,7 +224,7 @@ namespace huy.CodeGen.View
             {
                 var entityClassName = DatabaseUtils.UpperFirstLetter(table.TableName);
                 var properties = table.Columns.Select(p => p.ToEntityProperty())
-                   .OrderBy(p => p.PropertyName).ToList();
+                   .OrderBy(p => p.PropertyName, StringComparer.OrdinalIgnoreCase).ToList();
 
                 var dtoClass = CodeGenerator.GenEntityClass(nameSpace, entityClassName, properties, table.ReferencesToThisTable);
                 var path = vm.EntityPath + "\\" + entityClassName + ".cs";

@@ -45,7 +45,7 @@ namespace huy.CodeGen
             grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1.0, GridUnitType.Auto) });
             var dataGrid = new DataGrid();
             dataGrid.ItemsSource = vm.AllCultures.Where(p => vm.LanguageNameList.Contains(p.Name) == false)
-                .OrderBy(p => p.DisplayName)
+                .OrderBy(p => p.DisplayName, StringComparer.OrdinalIgnoreCase)
                 .Select(p => new { p.DisplayName, Code = p.Name });
             var btn = new Button() { Content = "Ok", Width = 80, Margin = new Thickness(10) };
             Grid.SetRow(btn, 1);
