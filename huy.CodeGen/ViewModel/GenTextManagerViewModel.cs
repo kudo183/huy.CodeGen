@@ -42,22 +42,7 @@ namespace huy.CodeGen
                 }
             }
         }
-
-        private string _defaultLanguageName;
-        public string DefaultLanguageName
-        {
-            get { return _defaultLanguageName; }
-            set
-            {
-                _defaultLanguageName = value;
-                OnPropertyChanged();
-                if (_defaultLanguageName != null)
-                {
-                    DefaultLanguageDisplayName = AllCultures.First(p => string.Compare(p.Name, _defaultLanguageName, true) == 0).DisplayName;
-                }
-            }
-        }
-
+        
         private string _defaultLanguageDisplayName;
         public string DefaultLanguageDisplayName
         {
@@ -131,6 +116,17 @@ namespace huy.CodeGen
             set
             {
                 _skippedTable = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _skippedColumn;
+        public string SkippedColumn
+        {
+            get { return _skippedColumn; }
+            set
+            {
+                _skippedColumn = value;
                 OnPropertyChanged();
             }
         }

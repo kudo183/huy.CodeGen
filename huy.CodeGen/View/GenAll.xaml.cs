@@ -168,7 +168,7 @@ namespace huy.CodeGen.View
 
             var viewNamespace = vm.ClientNamespace;
 
-            var textManagerClass = CodeGenerator.GenTextManagerClass(viewNamespace, defaultLanguage, textData);
+            var textManagerClass = CodeGenerator.GenTextManagerClass(viewNamespace, textData);
             System.IO.File.WriteAllText(System.IO.Path.Combine(vm.TextPath, "TextManager.cs"), textManagerClass);
 
             using (var fs = System.IO.File.Create(System.IO.Path.Combine(vm.TextPath, defaultLanguage + ".txt")))
