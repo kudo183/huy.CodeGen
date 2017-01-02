@@ -147,8 +147,7 @@ namespace huy.CodeGen.View
         private void GenText()
         {
             vm.Messages.Add(string.Format("{0} | Generating Text ...", DateTime.Now));
-
-            var defaultLanguage = vm.DefaultLanguage.ToLower();
+            
             var textData = new List<GenTextManagerViewModel.TextData>();
             foreach (var table in vm.DatabaseTreeVM.DbTables.Where(p => p.IsSelected == true))
             {
@@ -170,15 +169,6 @@ namespace huy.CodeGen.View
 
             var textManagerClass = CodeGenerator.GenTextManagerClass(viewNamespace, textData);
             System.IO.File.WriteAllText(System.IO.Path.Combine(vm.TextPath, "TextManager.cs"), textManagerClass);
-
-            using (var fs = System.IO.File.Create(System.IO.Path.Combine(vm.TextPath, defaultLanguage + ".txt")))
-            using (var sw = new System.IO.StreamWriter(fs))
-            {
-                foreach (var line in textData)
-                {
-                    sw.WriteLine(string.Format("{0}\t\t{1}", line.TextKey, line.TextValue));
-                }
-            }
         }
 
         private void GenController()

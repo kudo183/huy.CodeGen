@@ -30,15 +30,6 @@
                     <TextBox Text="{Binding DtoNamespace, UpdateSourceTrigger=PropertyChanged}" Width="200"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="5">
-                    <TextBlock Width="120" Text="Default Language: "/>
-                    <ComboBox ItemsSource="{Binding LanguageNameList}"
-                              DisplayMemberPath="DisplayName"
-                              SelectedValuePath="Name"
-                          SelectedValue="{Binding DefaultLanguage, UpdateSourceTrigger=PropertyChanged}"
-                          Width="330" HorizontalAlignment="Left" IsTextSearchEnabled="True"/>
-                    <TextBlock Width="100" Text="{Binding DefaultLanguage}" Foreground="Blue" VerticalAlignment="Center" Margin="5 0 0 0"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="5">
                     <TextBlock Width="120" Text="DbContext Name: "/>
                     <TextBox Text="{Binding DbContextName, UpdateSourceTrigger=PropertyChanged}" Width="200"/>
                 </StackPanel>
