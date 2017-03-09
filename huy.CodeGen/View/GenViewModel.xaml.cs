@@ -69,7 +69,7 @@ namespace huy.CodeGen
                 var properties = DatabaseUtils.ListColumnsOfTable(vm.DatabaseName, table);
                 var dtoClass = CodeGenerator.GenViewModelClass(vm.Namespace, table, properties);
                 var path = vm.OutputPath + "\\" + table + "ViewModel.cs";
-                System.IO.File.WriteAllText(path, dtoClass, Encoding.UTF8);
+                FileUtils.WriteAllTextInUTF8(path, dtoClass);
             }
         }
     }

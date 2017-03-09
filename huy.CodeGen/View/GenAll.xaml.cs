@@ -1,17 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace huy.CodeGen.View
 {
@@ -120,10 +111,10 @@ namespace huy.CodeGen.View
                     .OrderBy(p => p.PropertyName, StringComparer.OrdinalIgnoreCase).ToList();
 
                 var xamlClass = CodeGenerator.GenViewXamlClass(viewNamespace, entityClassName, properties);
-                System.IO.File.WriteAllText(path, xamlClass, Encoding.UTF8);
+                FileUtils.WriteAllTextInUTF8(path, xamlClass);
 
                 var codeClass = CodeGenerator.GenViewCodeClass(viewNamespace, entityClassName);
-                System.IO.File.WriteAllText(path + ".cs", codeClass, Encoding.UTF8);
+                FileUtils.WriteAllTextInUTF8(path + ".cs", codeClass);
             }
         }
 
@@ -140,14 +131,14 @@ namespace huy.CodeGen.View
 
                 var viewModelClass = CodeGenerator.GenViewModelClass(viewNamespace, entityClassName, properties);
                 var path = vm.ViewModelPath + "\\" + entityClassName + "ViewModel.cs";
-                System.IO.File.WriteAllText(path, viewModelClass, Encoding.UTF8);
+                FileUtils.WriteAllTextInUTF8(path, viewModelClass);
             }
         }
 
         private void GenText()
         {
             vm.Messages.Add(string.Format("{0} | Generating Text ...", DateTime.Now));
-            
+
             var textData = new List<GenTextManagerViewModel.TextData>();
             foreach (var table in vm.DatabaseTreeVM.DbTables.Where(p => p.IsSelected == true))
             {
@@ -168,7 +159,7 @@ namespace huy.CodeGen.View
             var viewNamespace = vm.ClientNamespace;
 
             var textManagerClass = CodeGenerator.GenTextManagerClass(viewNamespace, textData);
-            System.IO.File.WriteAllText(System.IO.Path.Combine(vm.TextPath, "TextManager.cs"), textManagerClass);
+            FileUtils.WriteAllTextInUTF8(System.IO.Path.Combine(vm.TextPath, "TextManager.cs"), textManagerClass);
         }
 
         private void GenController()
@@ -184,7 +175,7 @@ namespace huy.CodeGen.View
 
                 var controllerClass = CodeGenerator.GenControllerClass(viewNamespace, entityClassName, vm.DbContextName, properties);
                 var path = vm.ControllerPath + "\\" + entityClassName + "Controller.cs";
-                System.IO.File.WriteAllText(path, controllerClass, Encoding.UTF8);
+                FileUtils.WriteAllTextInUTF8(path, controllerClass);
             }
         }
 
@@ -201,7 +192,7 @@ namespace huy.CodeGen.View
 
                 var dtoClass = CodeGenerator.GenDtoClassImplementINotifyPropertyChanged(viewNamespace, "IDto", entityClassName + "Dto", properties);
                 var path = vm.DtoPath + "\\" + entityClassName + "Dto.cs";
-                System.IO.File.WriteAllText(path, dtoClass, Encoding.UTF8);
+                FileUtils.WriteAllTextInUTF8(path, dtoClass);
             }
         }
 
@@ -218,12 +209,12 @@ namespace huy.CodeGen.View
 
                 var dtoClass = CodeGenerator.GenEntityClass(nameSpace, entityClassName, properties, table.ReferencesToThisTable);
                 var path = vm.EntityPath + "\\" + entityClassName + ".cs";
-                System.IO.File.WriteAllText(path, dtoClass, Encoding.UTF8);
+                FileUtils.WriteAllTextInUTF8(path, dtoClass);
             }
 
             var contextClass = CodeGenerator.GenDbContextClass(nameSpace, vm.DbContextName, vm.DatabaseTreeVM.DbTables.Where(p => p.IsSelected == true));
             var contextClassPath = vm.EntityPath + "\\" + vm.DbContextName + ".cs";
-            System.IO.File.WriteAllText(contextClassPath, contextClass, Encoding.UTF8);
+            FileUtils.WriteAllTextInUTF8(contextClassPath, contextClass);
         }
     }
 }

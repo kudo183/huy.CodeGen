@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -57,7 +56,7 @@ namespace huy.CodeGen
                 var properties = DatabaseUtils.ListColumnsOfTable(vm.DatabaseName, table);
                 var dtoClass = CodeGenerator.GenControllerClass(vm.Namespace, table, vm.ContextName, properties);
                 var path = vm.OutputPath + "\\" + table + "Controller.cs";
-                System.IO.File.WriteAllText(path, dtoClass, Encoding.UTF8);
+                FileUtils.WriteAllTextInUTF8(path, dtoClass);
             }
         }
     }

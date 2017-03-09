@@ -80,7 +80,7 @@ namespace huy.CodeGen
             sfd.FileName = "TextManager.cs";
             if (sfd.ShowDialog() == true)
             {
-                File.WriteAllText(sfd.FileName, vm.Result);
+                FileUtils.WriteAllTextInUTF8(sfd.FileName, vm.Result);
             }
         }
 

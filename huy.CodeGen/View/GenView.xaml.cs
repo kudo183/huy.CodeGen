@@ -84,10 +84,10 @@ namespace huy.CodeGen
                 var path = vm.OutputPath + "\\" + table + "View.xaml";
 
                 var xamlClass = CodeGenerator.GenViewXamlClass(vm.Namespace, table, properties);
-                System.IO.File.WriteAllText(path, xamlClass, Encoding.UTF8);
+                FileUtils.WriteAllTextInUTF8(path, xamlClass);
 
                 var codeClass = CodeGenerator.GenViewCodeClass(vm.Namespace, table);
-                System.IO.File.WriteAllText(path + ".cs", codeClass, Encoding.UTF8);
+                FileUtils.WriteAllTextInUTF8(path + ".cs", codeClass);
             }
         }
     }

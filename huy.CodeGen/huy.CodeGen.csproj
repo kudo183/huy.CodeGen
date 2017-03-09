@@ -96,6 +96,7 @@
     <Compile Include="CodeGenerator.cs" />
     <Compile Include="DatabaseUtils.cs" />
     <Compile Include="EntityProperty.cs" />
+    <Compile Include="FileUtils.cs" />
     <Compile Include="ViewModelManager.cs" />
     <Compile Include="ViewModel\DatabaseTreeVM.cs" />
     <Compile Include="ViewModel\GenAllVM.cs" />
