@@ -32,6 +32,7 @@ namespace huy.CodeGen
             genAllVM.ControllerPath = Properties.Settings.Default.GA_ControllerPath;
             genAllVM.DtoPath = Properties.Settings.Default.GA_DtoPath;
             genAllVM.EntityPath = Properties.Settings.Default.GA_EntityPath;
+            genAllVM.ProjectPath = Properties.Settings.Default.GA_ProjectPath;
         }
 
         public void SaveSettings()
@@ -48,6 +49,7 @@ namespace huy.CodeGen
             Properties.Settings.Default.GA_ControllerPath = genAllVM.ControllerPath;
             Properties.Settings.Default.GA_DtoPath = genAllVM.DtoPath;
             Properties.Settings.Default.GA_EntityPath = genAllVM.EntityPath;
+            Properties.Settings.Default.GA_ProjectPath = genAllVM.ProjectPath;
 
             Properties.Settings.Default.Save();
         }

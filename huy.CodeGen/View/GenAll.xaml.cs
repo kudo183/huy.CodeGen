@@ -29,22 +29,22 @@ namespace huy.CodeGen.View
             switch (btn.Tag.ToString())
             {
                 case "View":
-                    GenView();
+                    GenView(vm.ViewPath);
                     break;
                 case "ViewModel":
-                    GenViewModel();
+                    GenViewModel(vm.ViewModelPath);
                     break;
                 case "Text":
-                    GenText();
+                    GenText(vm.TextPath);
                     break;
                 case "Controller":
-                    GenController();
+                    GenController(vm.ControllerPath);
                     break;
                 case "Dto":
-                    GenDto();
+                    GenDto(vm.DtoPath);
                     break;
                 case "Entity":
-                    GenEntity();
+                    GenEntity(vm.EntityPath);
                     break;
                 case "All":
                     GenAllCode();
@@ -56,13 +56,14 @@ namespace huy.CodeGen.View
 
         private void GenAllCode()
         {
-            GenView();
-            GenViewModel();
-            GenText();
-            GenController();
-            GenDto();
-            GenEntity();
+            GenView(System.IO.Path.Combine(vm.ProjectPath, @"Client\Client\View\Gen"));
+            GenViewModel(System.IO.Path.Combine(vm.ProjectPath, @"Client\Client\ViewModel\Gen"));
+            GenText(System.IO.Path.Combine(vm.ProjectPath, @"Client\Client\Text"));
+            GenController(System.IO.Path.Combine(vm.ProjectPath, @"Server\src\Server\Controllers\Gen"));
+            GenDto(System.IO.Path.Combine(vm.ProjectPath, @"DTO\src\DTO\Gen"));
+            GenEntity(System.IO.Path.Combine(vm.ProjectPath, @"Server\src\Server\Entities\Gen"));
         }
+
         private void OpenButton_Click(object sender, RoutedEventArgs e)
         {
             var btn = sender as Button;
@@ -89,6 +90,9 @@ namespace huy.CodeGen.View
                 case "Entity":
                     OpenPath(vm.EntityPath);
                     break;
+                case "All":
+                    OpenPath(vm.ProjectPath);
+                    break;
             }
         }
 
@@ -97,7 +101,7 @@ namespace huy.CodeGen.View
             System.Diagnostics.Process.Start(path);
         }
 
-        private void GenView()
+        private void GenView(string path)
         {
             vm.Messages.Add(string.Format("{0} | Generating View ...", DateTime.Now));
 
@@ -105,20 +109,20 @@ namespace huy.CodeGen.View
             foreach (var table in vm.DatabaseTreeVM.DbTables.Where(p => p.IsSelected == true))
             {
                 var entityClassName = DatabaseUtils.UpperFirstLetter(table.TableName);
-                var path = vm.ViewPath + "\\" + entityClassName + "View.xaml";
+                var tempPath = System.IO.Path.Combine(path, entityClassName + "View.xaml");
 
                 var properties = table.Columns.Where(p => p.ColumnName != "GroupID").Select(p => p.ToEntityProperty())
                     .OrderBy(p => p.PropertyName, StringComparer.OrdinalIgnoreCase).ToList();
 
                 var xamlClass = CodeGenerator.GenViewXamlClass(viewNamespace, entityClassName, properties);
-                FileUtils.WriteAllTextInUTF8(path, xamlClass);
+                FileUtils.WriteAllTextInUTF8(tempPath, xamlClass);
 
                 var codeClass = CodeGenerator.GenViewCodeClass(viewNamespace, entityClassName);
-                FileUtils.WriteAllTextInUTF8(path + ".cs", codeClass);
+                FileUtils.WriteAllTextInUTF8(tempPath + ".cs", codeClass);
             }
         }
 
-        private void GenViewModel()
+        private void GenViewModel(string path)
         {
             vm.Messages.Add(string.Format("{0} | Generating ViewModel ...", DateTime.Now));
 
@@ -130,12 +134,12 @@ namespace huy.CodeGen.View
                    .OrderBy(p => p.PropertyName, StringComparer.OrdinalIgnoreCase).ToList();
 
                 var viewModelClass = CodeGenerator.GenViewModelClass(viewNamespace, entityClassName, properties);
-                var path = vm.ViewModelPath + "\\" + entityClassName + "ViewModel.cs";
-                FileUtils.WriteAllTextInUTF8(path, viewModelClass);
+
+                FileUtils.WriteAllTextInUTF8(System.IO.Path.Combine(path, entityClassName + "ViewModel.cs"), viewModelClass);
             }
         }
 
-        private void GenText()
+        private void GenText(string path)
         {
             vm.Messages.Add(string.Format("{0} | Generating Text ...", DateTime.Now));
 
@@ -159,10 +163,10 @@ namespace huy.CodeGen.View
             var viewNamespace = vm.ClientNamespace;
 
             var textManagerClass = CodeGenerator.GenTextManagerClass(viewNamespace, textData);
-            FileUtils.WriteAllTextInUTF8(System.IO.Path.Combine(vm.TextPath, "TextManager.cs"), textManagerClass);
+            FileUtils.WriteAllTextInUTF8(System.IO.Path.Combine(path, "TextManager.cs"), textManagerClass);
         }
 
-        private void GenController()
+        private void GenController(string path)
         {
             vm.Messages.Add(string.Format("{0} | Generating Controller ...", DateTime.Now));
 
@@ -174,12 +178,12 @@ namespace huy.CodeGen.View
                    .OrderBy(p => p.PropertyName, StringComparer.OrdinalIgnoreCase).ToList();
 
                 var controllerClass = CodeGenerator.GenControllerClass(viewNamespace, entityClassName, vm.DbContextName, properties);
-                var path = vm.ControllerPath + "\\" + entityClassName + "Controller.cs";
-                FileUtils.WriteAllTextInUTF8(path, controllerClass);
+
+                FileUtils.WriteAllTextInUTF8(System.IO.Path.Combine(path, entityClassName + "Controller.cs"), controllerClass);
             }
         }
 
-        private void GenDto()
+        private void GenDto(string path)
         {
             vm.Messages.Add(string.Format("{0} | Generating Dto ...", DateTime.Now));
 
@@ -191,12 +195,12 @@ namespace huy.CodeGen.View
                    .OrderBy(p => p.PropertyName, StringComparer.OrdinalIgnoreCase).ToList();
 
                 var dtoClass = CodeGenerator.GenDtoClassImplementINotifyPropertyChanged(viewNamespace, "IDto", entityClassName + "Dto", properties);
-                var path = vm.DtoPath + "\\" + entityClassName + "Dto.cs";
-                FileUtils.WriteAllTextInUTF8(path, dtoClass);
+
+                FileUtils.WriteAllTextInUTF8(System.IO.Path.Combine(path, entityClassName + "Dto.cs"), dtoClass);
             }
         }
 
-        private void GenEntity()
+        private void GenEntity(string path)
         {
             vm.Messages.Add(string.Format("{0} | Generating Entity ...", DateTime.Now));
 
@@ -208,13 +212,13 @@ namespace huy.CodeGen.View
                    .OrderBy(p => p.PropertyName, StringComparer.OrdinalIgnoreCase).ToList();
 
                 var dtoClass = CodeGenerator.GenEntityClass(nameSpace, entityClassName, properties, table.ReferencesToThisTable);
-                var path = vm.EntityPath + "\\" + entityClassName + ".cs";
-                FileUtils.WriteAllTextInUTF8(path, dtoClass);
+
+                FileUtils.WriteAllTextInUTF8(System.IO.Path.Combine(path, entityClassName + ".cs"), dtoClass);
             }
 
             var contextClass = CodeGenerator.GenDbContextClass(nameSpace, vm.DbContextName, vm.DatabaseTreeVM.DbTables.Where(p => p.IsSelected == true));
-            var contextClassPath = vm.EntityPath + "\\" + vm.DbContextName + ".cs";
-            FileUtils.WriteAllTextInUTF8(contextClassPath, contextClass);
+
+            FileUtils.WriteAllTextInUTF8(System.IO.Path.Combine(path, vm.DbContextName + ".cs"), contextClass);
         }
     }
 }

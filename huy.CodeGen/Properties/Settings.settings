@@ -38,5 +38,8 @@
     <Setting Name="GA_EntityPath" Type="System.String" Scope="User">
       <Value Profile="(Default)">C:\GitHub\PhuDinhClientServer\Server\src\Server\Entities\Gen</Value>
     </Setting>
+    <Setting Name="GA_ProjectPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\github\ClientServerTemplate</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

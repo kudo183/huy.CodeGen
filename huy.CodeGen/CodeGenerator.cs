@@ -491,12 +491,12 @@ namespace huy.CodeGen
             sb.AppendLine("{");
             sb.AppendFormat("{0}public partial class {1} : DbContext, SwaIDbContext<SwaUser, SwaGroup, SwaUserGroup>{2}", tab, contextName, LineEnding);
             sb.AppendLine(tab + "{");
-            sb.AppendFormat("{0}public {1}(DbContextOptions<{1}> options) : base(options){2}", tab2, contextName, LineEnding);
-            sb.AppendLine(tab2 + "{");
-            sb.AppendLine(tab3 + "ChangeTracker.AutoDetectChangesEnabled = false;");
-            sb.AppendLine(tab3 + "ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;");
-            sb.AppendLine(tab2 + "}");
-            sb.AppendLine();
+            //sb.AppendFormat("{0}public {1}(DbContextOptions<{1}> options) : base(options){2}", tab2, contextName, LineEnding);
+            //sb.AppendLine(tab2 + "{");
+            //sb.AppendLine(tab3 + "ChangeTracker.AutoDetectChangesEnabled = false;");
+            //sb.AppendLine(tab3 + "ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;");
+            //sb.AppendLine(tab2 + "}");
+            //sb.AppendLine();
             sb.AppendLine(tab2 + "protected override void OnModelCreating(ModelBuilder modelBuilder)");
             sb.AppendLine(tab2 + "{");
             foreach (var table in tables)

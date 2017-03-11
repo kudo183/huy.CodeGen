@@ -166,5 +166,17 @@ namespace huy.CodeGen.Properties {
                 this["GA_EntityPath"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\github\\ClientServerTemplate")]
+        public string GA_ProjectPath {
+            get {
+                return ((string)(this["GA_ProjectPath"]));
+            }
+            set {
+                this["GA_ProjectPath"] = value;
+            }
+        }
     }
 }
