@@ -9,6 +9,9 @@
         WindowState="Maximized"
         Title="MainWindow" Height="350" Width="525">
     <TabControl>
+        <TabItem Header="All">
+            <view:GenAll/>
+        </TabItem>
         <TabItem Header="Dto">
             <local:GenDto/>
         </TabItem>
@@ -23,9 +26,6 @@
         </TabItem>
         <TabItem Header="View">
             <local:GenView/>
-        </TabItem>
-        <TabItem Header="All">
-            <view:GenAll/>
         </TabItem>
     </TabControl>
 </Window>
