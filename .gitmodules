@@ -1,3 +1,0 @@
-[submodule "Server/src/Website/wwwroot/lib"]
-	path = Server/src/Website/wwwroot/lib
-	url = https://github.com/kudo183/jsControl.git
