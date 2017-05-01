@@ -542,6 +542,7 @@ namespace huy.CodeGen
                 foreach (var hasColumnType in table.HasColumnTypes)
                 {
                     sb.AppendFormat("{0}entity.Property(e => e.{1}).HasColumnType(\"{2}\");{3}", tab4, hasColumnType.PropertyName, hasColumnType.TypeName, LineEnding);
+                    sb.AppendLine();
                 }
                 foreach (var requiredMaxLength in table.RequiredMaxLengths)
                 {

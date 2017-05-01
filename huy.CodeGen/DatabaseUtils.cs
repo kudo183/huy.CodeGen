@@ -183,7 +183,8 @@ namespace huy.CodeGen
                     ForeignKeys = new ObservableCollection<ForeignKey>(foreignKeys),
                     Indexes = new ObservableCollection<Index>(indexes),
                     RequiredMaxLengths = new ObservableCollection<RequiredMaxLength>(requiredMaxLengths),
-                    DefaultValues = new ObservableCollection<DefaultValue>(defaultValues)
+                    DefaultValues = new ObservableCollection<DefaultValue>(defaultValues),
+                    HasColumnTypes = new ObservableCollection<HasColumnType>(hasColumnTypes)
                 });
             }
 
