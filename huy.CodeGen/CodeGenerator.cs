@@ -321,7 +321,6 @@ namespace huy.CodeGen
             sb.AppendLine();
             foreach (var item in properties)
             {
-                var filterType = GetFilterTypeFromProperty(item);
                 sb.AppendFormat("{0}HeaderFilterBaseModel _{1}Filter;{2}",
                     tab2, item.PropertyName, LineEnding);
             }
